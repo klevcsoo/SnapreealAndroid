@@ -90,7 +90,7 @@ class LoginActivity : AppCompatActivity() {
         if (user == null) {
             Log.w(TAG, "No user found")
         } else {
-            Log.d(TAG, user.uid)
+            finish()
         }
     }
 
