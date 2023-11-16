@@ -78,6 +78,7 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
+    @Suppress("DEPRECATION")
     private fun signIn() {
         val signInIntent = googleSignInClient.signInIntent
         startActivityForResult(signInIntent, RC_SIGN_IN)
