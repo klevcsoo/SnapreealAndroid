@@ -1,4 +1,4 @@
-package com.klevcsoo.snapreealandroid
+package com.klevcsoo.snapreealandroid.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,20 +13,21 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
-import com.klevcsoo.snapreealandroid.databinding.ActivityMainBinding
+import com.klevcsoo.snapreealandroid.R
+import com.klevcsoo.snapreealandroid.databinding.ActivityLoginBinding
 import com.klevcsoo.snapreealandroid.service.FirebaseService
 
 
-class MainActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityLoginBinding
     private lateinit var googleSignInClient: GoogleSignInClient
 
     private val auth = FirebaseService.instance.auth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
