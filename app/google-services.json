@@ -12,7 +12,20 @@
           "package_name": "com.klevcsoo.snapreealandroid"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "311931052479-nf2uaarrno6q77i3rp5psdsmiouo4bek.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.klevcsoo.snapreealandroid",
+            "certificate_hash": "45e552426a40298185f37514fffe7634d412f7b3"
+          }
+        },
+        {
+          "client_id": "311931052479-5b08d9b6d6k2c178bmcc1pu6vkohhq9d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCLBbRMiPVAt513GbHUWVRJRe71x3fEwCY"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "311931052479-5b08d9b6d6k2c178bmcc1pu6vkohhq9d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

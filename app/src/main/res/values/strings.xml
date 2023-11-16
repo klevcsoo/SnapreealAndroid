@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">SnapreealAndroid</string>
+    <string name="app_name" translatable="false">Snapreeal</string>
+    <string name="web_client_id" translatable="false">311931052479-5b08d9b6d6k2c178bmcc1pu6vkohhq9d.apps.googleusercontent.com</string>
 </resources>
