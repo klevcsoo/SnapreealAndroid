@@ -1,4 +1,4 @@
-package com.klevcsoo.snapreealandroid.ui.activity
+package com.klevcsoo.snapreealandroid.ui.auth
 
 import android.content.Intent
 import android.os.Bundle

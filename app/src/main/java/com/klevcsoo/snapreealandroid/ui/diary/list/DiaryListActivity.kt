@@ -1,4 +1,4 @@
-package com.klevcsoo.snapreealandroid.ui.activity
+package com.klevcsoo.snapreealandroid.ui.diary.list
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,9 +8,9 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.klevcsoo.snapreealandroid.databinding.ActivityDiaryListBinding
-import com.klevcsoo.snapreealandroid.model.view.DiaryListViewModel
 import com.klevcsoo.snapreealandroid.service.FirebaseService
-import com.klevcsoo.snapreealandroid.ui.fragment.DiaryCardFragment
+import com.klevcsoo.snapreealandroid.ui.auth.LoginActivity
+import com.klevcsoo.snapreealandroid.ui.diary.create.CreateDiaryActivity
 import com.squareup.picasso.Picasso
 
 class DiaryListActivity : AppCompatActivity() {

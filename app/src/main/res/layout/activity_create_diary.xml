@@ -7,14 +7,14 @@
 
         <variable
                 name="viewModel"
-                type="com.klevcsoo.snapreealandroid.model.view.CreateDiaryViewModel" />
+                type="com.klevcsoo.snapreealandroid.ui.diary.create.CreateDiaryViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="12dp"
-            tools:context=".ui.activity.CreateDiaryActivity">
+            tools:context=".ui.diary.create.CreateDiaryActivity">
 
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/backButton"

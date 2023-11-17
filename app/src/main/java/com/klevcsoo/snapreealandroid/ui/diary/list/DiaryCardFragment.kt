@@ -1,4 +1,4 @@
-package com.klevcsoo.snapreealandroid.ui.fragment
+package com.klevcsoo.snapreealandroid.ui.diary.list
 
 import android.os.Bundle
 import android.util.Log

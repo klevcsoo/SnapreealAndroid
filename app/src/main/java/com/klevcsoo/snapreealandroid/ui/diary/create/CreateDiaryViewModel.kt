@@ -1,4 +1,4 @@
-package com.klevcsoo.snapreealandroid.model.view
+package com.klevcsoo.snapreealandroid.ui.diary.create
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData

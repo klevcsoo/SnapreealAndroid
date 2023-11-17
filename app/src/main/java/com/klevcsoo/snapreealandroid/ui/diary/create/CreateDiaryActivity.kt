@@ -1,4 +1,4 @@
-package com.klevcsoo.snapreealandroid.ui.activity
+package com.klevcsoo.snapreealandroid.ui.diary.create
 
 import android.os.Bundle
 import android.util.Log
@@ -6,7 +6,6 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.klevcsoo.snapreealandroid.databinding.ActivityCreateDiaryBinding
-import com.klevcsoo.snapreealandroid.model.view.CreateDiaryViewModel
 
 
 class CreateDiaryActivity : AppCompatActivity() {

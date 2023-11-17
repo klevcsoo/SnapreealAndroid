@@ -1,4 +1,4 @@
-package com.klevcsoo.snapreealandroid.model.view
+package com.klevcsoo.snapreealandroid.ui.diary.list
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
