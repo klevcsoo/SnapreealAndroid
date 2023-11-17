@@ -3,4 +3,7 @@
     <string name="web_client_id" translatable="false">311931052479-5b08d9b6d6k2c178bmcc1pu6vkohhq9d.apps.googleusercontent.com</string>
     <string name="your_avatar">your avatar</string>
     <string name="create_new_diary">create new diary</string>
+    <string name="go_back">go back</string>
+    <string name="name_for_the_diary">name for the diary</string>
+    <string name="let_s_go">let\'s go!</string>
 </resources>

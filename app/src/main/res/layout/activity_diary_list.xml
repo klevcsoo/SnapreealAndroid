@@ -8,7 +8,7 @@
         tools:context=".activity.DiaryListActivity">
 
     <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/avatar_image"
+            android:id="@+id/avatarImage"
             android:layout_width="48dp"
             android:layout_height="48dp"
             app:shapeAppearanceOverlay="@style/circular_avatar_image"
@@ -29,17 +29,32 @@
             android:textColor="@color/primary_900"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/avatar_image"
-            app:layout_constraintBottom_toBottomOf="@+id/avatar_image" />
+            app:layout_constraintTop_toTopOf="@+id/avatarImage"
+            app:layout_constraintBottom_toBottomOf="@+id/avatarImage" />
 
     <ImageButton
-            android:id="@+id/create_diary_button"
+            android:id="@+id/createDiaryButton"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/baseline_add_24"
+            android:src="@drawable/rounded_add_24"
             android:contentDescription="@string/create_new_diary"
             android:background="@android:color/transparent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
+    <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appLogoText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+                android:id="@+id/diaryList"
+                android:layout_width="wrap_content"
+                android:layout_height="480dp"
+                android:orientation="horizontal" />
+    </HorizontalScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

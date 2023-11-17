@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+                name="viewModel"
+                type="com.klevcsoo.snapreealandroid.model.view.CreateDiaryViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="12dp"
+            tools:context=".activity.CreateDiaryActivity">
+
+        <ImageButton
+                android:id="@+id/backButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/rounded_arrow_back_24"
+                android:contentDescription="@string/go_back"
+                android:background="@android:color/transparent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/create_new_diary"
+                android:fontFamily="@font/dm_sans"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/backButton"
+                app:layout_constraintBottom_toBottomOf="@+id/backButton"
+                android:id="@+id/titleTextView" />
+
+        <EditText
+                android:id="@+id/diaryNameInput"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="12dp"
+                android:inputType="text"
+                android:textColor="@color/primary_900"
+                android:importantForAutofill="no"
+                android:hint="@string/name_for_the_diary"
+                android:text="@={viewModel.diaryName}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/createDiaryButton" />
+
+        <Button
+                android:id="@+id/createDiaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/let_s_go"
+                android:enabled="@{!viewModel.loading &amp;&amp; viewModel.diaryName.length() != 0}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
