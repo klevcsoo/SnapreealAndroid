@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentReference
 import com.klevcsoo.snapreealandroid.model.Diary
+import com.klevcsoo.snapreealandroid.model.Snap
 import com.klevcsoo.snapreealandroid.service.FirebaseService
 import kotlinx.coroutines.tasks.await
 import java.util.Date
@@ -32,6 +33,61 @@ class DiaryRepository {
                 val diaries = snapshot!!.map { diarySnapshot -> Diary.createFrom(diarySnapshot) }
                 Log.d(TAG, "${diaries.size} diaries found")
                 listener(diaries)
+            } catch (e: Error) {
+                Log.w(TAG, "${e.message}")
+                listener(listOf())
+            }
+        }
+    }
+
+    fun onDiaryDetails(id: String, listener: (diary: Diary?) -> Unit) {
+        Log.d(TAG, "Fetching diary details...")
+
+        if (auth.currentUser === null) {
+            Log.w(TAG, "Cannot load diary details: user is unauthenticated")
+            return
+        }
+
+        val ref = firestore.collection("users").document(auth.currentUser!!.uid)
+            .collection("diaries").document(id)
+        ref.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                Log.w(TAG, "Failed to load diaries", error)
+                return@addSnapshotListener
+            }
+
+            try {
+                val diary = Diary.createFrom(snapshot!!)
+                Log.d(TAG, "${diary.id} fetched")
+                listener(diary)
+            } catch (e: Error) {
+                Log.w(TAG, "${e.message}")
+                listener(null)
+            }
+        }
+    }
+
+    fun onDiarySnapList(id: String, listener: (snaps: List<Snap>) -> Unit) {
+        Log.d(TAG, "Fetching diary snaps...")
+
+        if (auth.currentUser === null) {
+            Log.w(TAG, "Cannot load diary snaps: user is unauthenticated")
+            return
+        }
+
+        val ref = firestore.collection("users").document(auth.currentUser!!.uid)
+            .collection("diaries").document(id)
+            .collection("snaps")
+        ref.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                Log.w(TAG, "Failed to load diaries", error)
+                return@addSnapshotListener
+            }
+
+            try {
+                val snaps = snapshot!!.map { snapSnapshot -> Snap.createFrom(snapSnapshot) }
+                Log.d(TAG, "${snaps.size} snaps found in diary $id")
+                listener(snaps)
             } catch (e: Error) {
                 Log.w(TAG, "${e.message}")
                 listener(listOf())

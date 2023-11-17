@@ -1,13 +1,14 @@
 package com.klevcsoo.snapreealandroid.ui.diary.list
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.klevcsoo.snapreealandroid.databinding.FragmentDiaryCardBinding
 import com.klevcsoo.snapreealandroid.model.Diary
+import com.klevcsoo.snapreealandroid.ui.diary.details.DiaryDetailsActivity
 
 private const val ARG_DIARY_ID = "diaryId"
 private const val ARG_DIARY_NAME = "diaryName"
@@ -34,7 +35,6 @@ class DiaryCardFragment : Fragment() {
     ): View {
         _binding = FragmentDiaryCardBinding.inflate(inflater, container, false)
         return binding.root
-//        return inflater.inflate(R.layout.fragment_diary_card, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,7 +42,9 @@ class DiaryCardFragment : Fragment() {
 
         binding.nameText.text = diaryName
         binding.openButton.setOnClickListener {
-            Log.d(TAG, "$diaryId")
+            val intent = Intent(activity, DiaryDetailsActivity::class.java)
+            intent.putExtra("diaryId", diaryId)
+            startActivity(intent)
         }
     }
 

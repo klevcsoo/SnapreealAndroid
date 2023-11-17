@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="12dp"
+            android:padding="24dp"
             tools:context=".ui.diary.create.CreateDiaryActivity">
 
         <com.google.android.material.button.MaterialButton
@@ -36,7 +36,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/backButton"
                 app:layout_constraintBottom_toBottomOf="@+id/backButton"
-                android:id="@+id/titleTextView" />
+                android:id="@+id/titleText" />
 
         <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/diaryNameInput"

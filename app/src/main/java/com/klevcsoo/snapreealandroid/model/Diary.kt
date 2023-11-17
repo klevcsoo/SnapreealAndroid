@@ -16,7 +16,7 @@ data class Diary(
             val name = snapshot.getString("name")
 
             if (createdAt == null || name == null) {
-                throw Error("Incomplete DB entity: ${snapshot.reference.path}")
+                throw Error("Incomplete Diary entity: ${snapshot.reference.path}")
             }
 
             return Diary(snapshot.id, createdAt, name)
