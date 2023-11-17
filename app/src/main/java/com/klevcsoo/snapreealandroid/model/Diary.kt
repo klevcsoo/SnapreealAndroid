@@ -7,19 +7,19 @@ import com.klevcsoo.snapreealandroid.util.Identifiable
 
 data class Diary(
     override val id: String,
-    val createdOn: Timestamp,
+    val createdAt: Timestamp,
     val name: String
 ) : Identifiable {
     companion object : CreatableFromSnapshot<Diary> {
         override fun createFrom(snapshot: DocumentSnapshot): Diary {
-            val createdOn = snapshot.get("createdOn", Timestamp::class.java)
+            val createdAt = snapshot.get("createdAt", Timestamp::class.java)
             val name = snapshot.getString("name")
 
-            if (createdOn == null || name == null) {
+            if (createdAt == null || name == null) {
                 throw Error("Incomplete DB entity: ${snapshot.reference.path}")
             }
 
-            return Diary(snapshot.id, createdOn, name)
+            return Diary(snapshot.id, createdAt, name)
         }
     }
 }

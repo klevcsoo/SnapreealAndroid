@@ -13,6 +13,8 @@ class DiaryRepository {
     private val firestore = FirebaseService.instance.firestore
 
     fun onDiaryList(listener: (diaries: List<Diary>) -> Unit) {
+        Log.d(TAG, "Fetching diaries...")
+
         if (auth.currentUser === null) {
             Log.w(TAG, "Cannot load diary list: user is unauthenticated")
             return
@@ -27,9 +29,12 @@ class DiaryRepository {
             }
 
             try {
-                listener(snapshot!!.map { diarySnapshot -> Diary.createFrom(diarySnapshot) })
+                val diaries = snapshot!!.map { diarySnapshot -> Diary.createFrom(diarySnapshot) }
+                Log.d(TAG, "${diaries.size} diaries found")
+                listener(diaries)
             } catch (e: Error) {
                 Log.w(TAG, "${e.message}")
+                listener(listOf())
             }
         }
     }

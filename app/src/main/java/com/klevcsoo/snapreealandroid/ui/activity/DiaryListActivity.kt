@@ -1,14 +1,16 @@
-package com.klevcsoo.snapreealandroid.activity
+package com.klevcsoo.snapreealandroid.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.klevcsoo.snapreealandroid.databinding.ActivityDiaryListBinding
-import com.klevcsoo.snapreealandroid.model.Diary
 import com.klevcsoo.snapreealandroid.model.view.DiaryListViewModel
 import com.klevcsoo.snapreealandroid.service.FirebaseService
+import com.klevcsoo.snapreealandroid.ui.fragment.DiaryCardFragment
 import com.squareup.picasso.Picasso
 
 class DiaryListActivity : AppCompatActivity() {
@@ -19,22 +21,21 @@ class DiaryListActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDiaryListBinding
 
-    private var diaryList: List<Diary> = listOf()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this)[DiaryListViewModel::class.java]
         binding = ActivityDiaryListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         if (auth.currentUser == null) {
             startActivity(Intent(this, LoginActivity::class.java))
+            recreate()
         } else {
             Picasso.get().load(viewModel.getPhotoURL()).into(binding.avatarImage)
             viewModel.onList { diaries ->
-                diaryList = diaries
-                Log.d(TAG, "Diaries: $diaryList")
+                val fragments = diaries.map { diary -> DiaryCardFragment.newInstance(diary) }
+                binding.diaryPager.adapter =
+                    DiaryListAdapter(fragments, this)
             }
         }
 
@@ -44,6 +45,14 @@ class DiaryListActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val TAG = "DiaryListActivity"
+        private class DiaryListAdapter(
+            private val fragments: List<Fragment>,
+            fragmentActivity: FragmentActivity
+        ) : FragmentStateAdapter(fragmentActivity) {
+            override fun getItemCount(): Int = fragments.size
+
+            override fun createFragment(position: Int): Fragment = fragments[position]
+        }
+
     }
 }

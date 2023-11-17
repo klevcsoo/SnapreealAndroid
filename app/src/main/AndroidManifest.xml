@@ -15,11 +15,11 @@
             android:usesCleartextTraffic="true"
             tools:targetApi="31">
         <activity
-                android:name=".activity.CreateDiaryActivity"
+                android:name=".ui.activity.CreateDiaryActivity"
                 android:exported="false"
                 android:windowSoftInputMode="adjustResize" />
         <activity
-                android:name=".activity.DiaryListActivity"
+                android:name=".ui.activity.DiaryListActivity"
                 android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,7 +28,7 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".activity.LoginActivity"
+                android:name=".ui.activity.LoginActivity"
                 android:exported="false" />
     </application>
 

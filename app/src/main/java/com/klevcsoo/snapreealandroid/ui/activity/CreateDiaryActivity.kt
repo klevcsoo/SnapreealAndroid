@@ -1,4 +1,4 @@
-package com.klevcsoo.snapreealandroid.activity
+package com.klevcsoo.snapreealandroid.ui.activity
 
 import android.os.Bundle
 import android.util.Log
