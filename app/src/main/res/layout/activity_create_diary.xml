@@ -38,22 +38,29 @@
                 app:layout_constraintBottom_toBottomOf="@+id/backButton"
                 android:id="@+id/titleTextView" />
 
-        <EditText
+        <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/diaryNameInput"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:inputType="text"
-                android:textColor="@color/primary_900"
-                android:importantForAutofill="no"
                 android:hint="@string/name_for_the_diary"
-                android:text="@={viewModel.diaryName}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/createDiaryButton" />
+                app:layout_constraintBottom_toTopOf="@+id/createDiaryButton">
 
-        <Button
+            <com.google.android.material.textfield.TextInputEditText
+                    style="@style/Widget.Material3.TextInputEditText.OutlinedBox.Dense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:importantForAutofill="no"
+                    android:text="@={viewModel.diaryName}" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
                 android:id="@+id/createDiaryButton"
+                style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/let_s_go"
