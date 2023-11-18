@@ -1,6 +1,7 @@
 package com.klevcsoo.snapreealandroid.ui.diary.details.snaps
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,11 +12,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.klevcsoo.snapreealandroid.databinding.FragmentDiarySnapsBinding
 import com.klevcsoo.snapreealandroid.model.Diary
+import com.klevcsoo.snapreealandroid.util.serializable
 import kotlinx.coroutines.launch
 
 
 class DiarySnapsFragment : Fragment() {
-    private var diaryId: String? = null
+    private var diary: Diary? = null
 
     private lateinit var viewModel: DiarySnapsViewModel
     private var _binding: FragmentDiarySnapsBinding? = null
@@ -24,7 +26,7 @@ class DiarySnapsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            diaryId = it.getString("diaryId")
+            diary = it.serializable<Diary>("diary")
         }
     }
 
@@ -38,8 +40,15 @@ class DiarySnapsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (diary == null) {
+            Log.w(TAG, "Diary object not received")
+            requireActivity().finish()
+            return
+        }
+
         viewModel = ViewModelProvider(this)[DiarySnapsViewModel::class.java]
-        viewModel.load(diaryId!!)
+        viewModel.load(diary!!.id)
 
         lifecycleScope.launch {
             viewModel.dates.observe(viewLifecycleOwner) { dates ->
@@ -58,16 +67,16 @@ class DiarySnapsFragment : Fragment() {
 
                     transaction.add(
                         row.id, SnapCardFragment
-                            .newInstance(diaryId!!, dates[i], null)
+                            .newInstance(diary!!, dates[i], null)
                     )
                     if (i + 1 < dates.size) {
                         val fragment = SnapCardFragment
-                            .newInstance(diaryId!!, dates[i + 1], null)
+                            .newInstance(diary!!, dates[i + 1], null)
                         transaction.add(row.id, fragment)
                     }
                     if (i + 2 < dates.size) {
                         val fragment = SnapCardFragment
-                            .newInstance(diaryId!!, dates[i + 2], null)
+                            .newInstance(diary!!, dates[i + 2], null)
                         transaction.add(row.id, fragment)
                     }
                 }
@@ -82,9 +91,11 @@ class DiarySnapsFragment : Fragment() {
         @Suppress("unused")
         const val TAG = "DiarySnapsFragment"
 
+        private const val ARG_DIARY = "diary"
+
         fun newInstance(diary: Diary) = DiarySnapsFragment().apply {
             arguments = Bundle().apply {
-                putString("diaryId", diary.id)
+                putSerializable(ARG_DIARY, diary)
             }
         }
     }

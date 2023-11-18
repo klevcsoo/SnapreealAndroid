@@ -9,13 +9,12 @@ import androidx.fragment.app.Fragment
 import com.klevcsoo.snapreealandroid.databinding.FragmentDiaryCardBinding
 import com.klevcsoo.snapreealandroid.model.Diary
 import com.klevcsoo.snapreealandroid.ui.diary.details.DiaryDetailsActivity
+import com.klevcsoo.snapreealandroid.util.serializable
 
-private const val ARG_DIARY_ID = "diaryId"
-private const val ARG_DIARY_NAME = "diaryName"
+private const val ARG_DIARY = "diary"
 
 class DiaryCardFragment : Fragment() {
-    private var diaryId: String? = null
-    private var diaryName: String? = null
+    private var diary: Diary? = null
 
     private var _binding: FragmentDiaryCardBinding? = null
     private val binding get() = _binding!!
@@ -24,8 +23,7 @@ class DiaryCardFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            diaryId = it.getString(ARG_DIARY_ID)
-            diaryName = it.getString(ARG_DIARY_NAME)
+            diary = it.serializable(ARG_DIARY)
         }
     }
 
@@ -40,10 +38,10 @@ class DiaryCardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.nameText.text = diaryName
+        binding.nameText.text = diary?.name
         binding.openButton.setOnClickListener {
             val intent = Intent(activity, DiaryDetailsActivity::class.java)
-            intent.putExtra("diaryId", diaryId)
+            intent.putExtra("diary", diary)
             startActivity(intent)
         }
     }
@@ -58,8 +56,7 @@ class DiaryCardFragment : Fragment() {
         fun newInstance(diary: Diary) =
             DiaryCardFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_DIARY_ID, diary.id)
-                    putString(ARG_DIARY_NAME, diary.name)
+                    putSerializable(ARG_DIARY, diary)
                 }
             }
     }

@@ -4,6 +4,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import com.klevcsoo.snapreealandroid.util.CreatableFromSnapshot
 import com.klevcsoo.snapreealandroid.util.Identifiable
+import java.io.Serializable
 
 data class Snap(
     override val id: String,
@@ -12,7 +13,7 @@ data class Snap(
     val mediaLength: Long,
     val thumbnailUrl: String,
     val videoUrl: String
-) : Identifiable {
+) : Identifiable, Serializable {
     companion object : CreatableFromSnapshot<Snap> {
         override fun createFrom(snapshot: DocumentSnapshot): Snap {
             val date = snapshot.get("date", Timestamp::class.java)

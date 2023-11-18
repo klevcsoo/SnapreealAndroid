@@ -4,13 +4,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.klevcsoo.snapreealandroid.model.Snap
 import com.klevcsoo.snapreealandroid.repository.DiaryRepository
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 import java.util.Calendar
 import java.util.Date
 
 class DiarySnapsViewModel() : ViewModel() {
     val snaps: MutableLiveData<List<Snap>> = MutableLiveData(listOf())
     val loading: MutableLiveData<Boolean> = MutableLiveData(false)
-    val dates: MutableLiveData<List<Date>> = MutableLiveData(listOf())
+    val dates: MutableLiveData<List<LocalDate>> = MutableLiveData(listOf())
 
     private val repository = DiaryRepository()
 
@@ -26,7 +29,7 @@ class DiarySnapsViewModel() : ViewModel() {
         }
     }
 
-    private fun generateDates(): List<Date> {
+    private fun generateDates(): List<LocalDate> {
         val calendar = Calendar.getInstance()
         val list = mutableListOf<Date>()
 
@@ -36,6 +39,9 @@ class DiarySnapsViewModel() : ViewModel() {
             calendar.add(Calendar.DAY_OF_YEAR, -i)
         }
 
-        return list.reversed()
+        return list.reversed().map { date ->
+            Instant.ofEpochMilli(date.time).atZone(ZoneId.systemDefault())
+                .toLocalDate()
+        }
     }
 }

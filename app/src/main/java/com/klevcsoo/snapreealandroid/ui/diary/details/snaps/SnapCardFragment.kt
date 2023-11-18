@@ -7,11 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.klevcsoo.snapreealandroid.databinding.FragmentSnapCardBinding
+import com.klevcsoo.snapreealandroid.model.Diary
+import com.klevcsoo.snapreealandroid.model.Snap
 import com.klevcsoo.snapreealandroid.ui.diary.details.snaps.create.CreateSnapActivity
-import java.time.Instant
-import java.time.ZoneId
+import com.klevcsoo.snapreealandroid.util.serializable
+import java.time.LocalDate
 import java.time.format.TextStyle
-import java.util.Date
 import java.util.Locale
 
 class SnapCardFragment : Fragment() {
@@ -30,8 +31,7 @@ class SnapCardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         arguments?.let { bundle ->
-            val date = Instant.ofEpochMilli(bundle.getLong(ARG_DATE))
-                .atZone(ZoneId.systemDefault()).toLocalDate()
+            val date = bundle.serializable<LocalDate>(ARG_DATE)!!
 
             if (date.dayOfMonth == 1) {
                 binding.dateText.text = date.month.getDisplayName(
@@ -47,25 +47,26 @@ class SnapCardFragment : Fragment() {
 
             binding.root.setOnClickListener {
                 val intent = Intent(context, CreateSnapActivity::class.java)
-                intent.putExtra("diaryId", bundle.getString(ARG_DIARY_ID))
+                intent.putExtra(ARG_DIARY, bundle.serializable<Diary>(ARG_DIARY))
+                intent.putExtra(ARG_DATE, date)
                 startActivity(intent)
             }
         }
     }
 
     companion object {
-        private const val ARG_DIARY_ID = "diaryId"
-        private const val ARG_SNAP_ID = "snapId"
+        private const val ARG_DIARY = "diary"
         private const val ARG_DATE = "snapDate"
+        private const val ARG_SNAP = "snap"
 
         @Suppress("unused")
         const val TAG = "SnapCardFragment"
 
-        fun newInstance(diaryId: String, date: Date, snapId: String?) = SnapCardFragment().apply {
+        fun newInstance(diary: Diary, date: LocalDate, snap: Snap?) = SnapCardFragment().apply {
             arguments = Bundle().apply {
-                putString(ARG_DIARY_ID, diaryId)
-                putString(ARG_SNAP_ID, snapId)
-                putLong(ARG_DATE, date.time)
+                putSerializable(ARG_DIARY, diary)
+                putSerializable(ARG_SNAP, snap)
+                putSerializable(ARG_DATE, date)
             }
         }
     }
