@@ -12,4 +12,6 @@
     <string name="diary">diary</string>
     <string name="snaps_in_your_diary">snaps in your diary</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="capture_video_for_your_snap">capture video for your snap</string>
+    <string name="switch_cameras">switch cameras</string>
 </resources>

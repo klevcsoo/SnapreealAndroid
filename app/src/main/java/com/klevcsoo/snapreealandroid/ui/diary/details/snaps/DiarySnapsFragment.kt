@@ -56,13 +56,18 @@ class DiarySnapsFragment : Fragment() {
                     row.id = 9000 + i
                     rows.add(row)
 
-                    transaction.add(row.id, SnapCardFragment.newInstance(dates[i], null))
+                    transaction.add(
+                        row.id, SnapCardFragment
+                            .newInstance(diaryId!!, dates[i], null)
+                    )
                     if (i + 1 < dates.size) {
-                        val fragment = SnapCardFragment.newInstance(dates[i + 1], null)
+                        val fragment = SnapCardFragment
+                            .newInstance(diaryId!!, dates[i + 1], null)
                         transaction.add(row.id, fragment)
                     }
                     if (i + 2 < dates.size) {
-                        val fragment = SnapCardFragment.newInstance(dates[i + 2], null)
+                        val fragment = SnapCardFragment
+                            .newInstance(diaryId!!, dates[i + 2], null)
                         transaction.add(row.id, fragment)
                     }
                 }

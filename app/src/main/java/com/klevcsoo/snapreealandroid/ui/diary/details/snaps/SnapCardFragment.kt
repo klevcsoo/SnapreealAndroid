@@ -1,11 +1,13 @@
 package com.klevcsoo.snapreealandroid.ui.diary.details.snaps
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.klevcsoo.snapreealandroid.databinding.FragmentSnapCardBinding
+import com.klevcsoo.snapreealandroid.ui.diary.details.snaps.create.CreateSnapActivity
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.TextStyle
@@ -27,8 +29,8 @@ class SnapCardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        arguments?.let {
-            val date = Instant.ofEpochMilli(it.getLong(ARG_SNAP_DATE))
+        arguments?.let { bundle ->
+            val date = Instant.ofEpochMilli(bundle.getLong(ARG_DATE))
                 .atZone(ZoneId.systemDefault()).toLocalDate()
 
             if (date.dayOfMonth == 1) {
@@ -43,20 +45,27 @@ class SnapCardFragment : Fragment() {
                 )
             }
 
+            binding.root.setOnClickListener {
+                val intent = Intent(context, CreateSnapActivity::class.java)
+                intent.putExtra("diaryId", bundle.getString(ARG_DIARY_ID))
+                startActivity(intent)
+            }
         }
     }
 
     companion object {
+        private const val ARG_DIARY_ID = "diaryId"
         private const val ARG_SNAP_ID = "snapId"
-        private const val ARG_SNAP_DATE = "snapDate"
+        private const val ARG_DATE = "snapDate"
 
         @Suppress("unused")
         const val TAG = "SnapCardFragment"
 
-        fun newInstance(date: Date, snapId: String?) = SnapCardFragment().apply {
+        fun newInstance(diaryId: String, date: Date, snapId: String?) = SnapCardFragment().apply {
             arguments = Bundle().apply {
+                putString(ARG_DIARY_ID, diaryId)
                 putString(ARG_SNAP_ID, snapId)
-                putLong(ARG_SNAP_DATE, date.time)
+                putLong(ARG_DATE, date.time)
             }
         }
     }
