@@ -31,17 +31,27 @@ class SnapCardFragment : Fragment() {
             val date = Instant.ofEpochMilli(it.getLong(ARG_SNAP_DATE))
                 .atZone(ZoneId.systemDefault()).toLocalDate()
 
-            binding.dateText.text = date.dayOfMonth.toString()
-            binding.dayText.text = date.dayOfWeek.getDisplayName(
-                TextStyle.SHORT, Locale.getDefault()
-            )
-        }
+            if (date.dayOfMonth == 1) {
+                binding.dateText.text = date.month.getDisplayName(
+                    TextStyle.SHORT, Locale.getDefault()
+                )
+                binding.dayText.text = ""
+            } else {
+                binding.dateText.text = date.dayOfMonth.toString()
+                binding.dayText.text = date.dayOfWeek.getDisplayName(
+                    TextStyle.SHORT, Locale.getDefault()
+                )
+            }
 
+        }
     }
 
     companion object {
         private const val ARG_SNAP_ID = "snapId"
         private const val ARG_SNAP_DATE = "snapDate"
+
+        @Suppress("unused")
+        const val TAG = "SnapCardFragment"
 
         fun newInstance(date: Date, snapId: String?) = SnapCardFragment().apply {
             arguments = Bundle().apply {

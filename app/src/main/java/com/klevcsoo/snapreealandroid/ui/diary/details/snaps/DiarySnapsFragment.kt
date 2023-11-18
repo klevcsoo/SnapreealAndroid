@@ -5,13 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.ScrollView
+import android.widget.TableRow
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.klevcsoo.snapreealandroid.databinding.FragmentDiarySnapsBinding
 import com.klevcsoo.snapreealandroid.model.Diary
 import kotlinx.coroutines.launch
+
 
 class DiarySnapsFragment : Fragment() {
     private var diaryId: String? = null
@@ -43,36 +44,32 @@ class DiarySnapsFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.dates.observe(viewLifecycleOwner) { dates ->
                 val transaction = parentFragmentManager.beginTransaction()
+                val rows: MutableList<TableRow> = mutableListOf()
 
                 for (i in dates.indices step 3) {
-                    val row = LinearLayout(context)
+                    val row = TableRow(context)
                     row.layoutParams = LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT
                     )
-                    row.orientation = LinearLayout.HORIZONTAL
+                    row.focusable = View.FOCUSABLE
                     row.id = 9000 + i
-                    binding.snapRowList.addView(row)
+                    rows.add(row)
 
                     transaction.add(row.id, SnapCardFragment.newInstance(dates[i], null))
                     if (i + 1 < dates.size) {
-                        transaction.add(
-                            row.id,
-                            SnapCardFragment.newInstance(dates[i + 1], null)
-                        )
+                        val fragment = SnapCardFragment.newInstance(dates[i + 1], null)
+                        transaction.add(row.id, fragment)
                     }
                     if (i + 2 < dates.size) {
-                        transaction.add(
-                            row.id,
-                            SnapCardFragment.newInstance(dates[i + 2], null)
-                        )
+                        val fragment = SnapCardFragment.newInstance(dates[i + 2], null)
+                        transaction.add(row.id, fragment)
                     }
                 }
 
                 transaction.commit()
+                rows.forEach { binding.snapRowTable.addView(it) }
             }
-        }.invokeOnCompletion {
-            binding.root.fullScroll(ScrollView.FOCUS_DOWN)
         }
     }
 

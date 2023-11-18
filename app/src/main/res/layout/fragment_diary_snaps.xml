@@ -6,10 +6,9 @@
         android:contentDescription="@string/snaps_in_your_diary"
         tools:context=".ui.diary.details.snaps.DiarySnapsFragment">
 
-    <LinearLayout
-            android:id="@+id/snapRowList"
+    <TableLayout
+            android:id="@+id/snapRowTable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:columnCount="3"
-            android:orientation="vertical" />
+            android:stretchColumns="1, 2, 3" />
 </ScrollView>
