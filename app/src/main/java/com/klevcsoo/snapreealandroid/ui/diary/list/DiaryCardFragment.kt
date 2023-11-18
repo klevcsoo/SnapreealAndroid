@@ -54,8 +54,6 @@ class DiaryCardFragment : Fragment() {
     }
 
     companion object {
-        const val TAG = "DiaryCardFragment"
-
         @JvmStatic
         fun newInstance(diary: Diary) =
             DiaryCardFragment().apply {

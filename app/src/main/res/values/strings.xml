@@ -10,4 +10,6 @@
     <string name="open">open</string>
     <string name="snaps">snaps</string>
     <string name="diary">diary</string>
+    <string name="snaps_in_your_diary">snaps in your diary</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

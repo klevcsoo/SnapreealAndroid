@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
                 name="viewModel"
                 type="com.klevcsoo.snapreealandroid.ui.diary.details.DiaryDetailsViewModel" />
@@ -18,7 +20,8 @@
         <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/mainPager"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:visibility="@{viewModel.loading ? View.GONE : View.VISIBLE}" />
 
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/backButton"
@@ -29,9 +32,11 @@
                 app:icon="@drawable/rounded_arrow_back_24"
                 android:contentDescription="@string/go_back"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                android:visibility="@{viewModel.loading ? View.GONE : View.VISIBLE}" />
 
         <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/titleText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{viewModel.diary.name}"
@@ -41,7 +46,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/backButton"
                 app:layout_constraintBottom_toBottomOf="@+id/backButton"
-                android:id="@+id/titleText" />
+                android:visibility="@{viewModel.loading ? View.GONE : View.VISIBLE}" />
+
+        <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:visibility="@{viewModel.loading ? View.VISIBLE : View.GONE}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

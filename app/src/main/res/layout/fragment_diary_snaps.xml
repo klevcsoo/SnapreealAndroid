@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.diary.details.DiarySnapsFragment">
+        android:contentDescription="@string/snaps_in_your_diary"
+        tools:context=".ui.diary.details.snaps.DiarySnapsFragment">
 
-    <TextView
+    <LinearLayout
+            android:id="@+id/snapRowList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Hello" />
-
-</FrameLayout>
+            android:layout_height="wrap_content"
+            android:columnCount="3"
+            android:orientation="vertical" />
+</ScrollView>
