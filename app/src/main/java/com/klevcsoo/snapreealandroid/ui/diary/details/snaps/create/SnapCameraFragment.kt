@@ -28,18 +28,16 @@ import androidx.fragment.app.Fragment
 import com.google.common.util.concurrent.ListenableFuture
 import com.klevcsoo.snapreealandroid.R
 import com.klevcsoo.snapreealandroid.databinding.FragmentSnapCameraBinding
-import com.klevcsoo.snapreealandroid.model.Diary
+import com.klevcsoo.snapreealandroid.model.DiaryDay
 import com.klevcsoo.snapreealandroid.util.serializable
 import java.io.File
 import kotlin.math.roundToInt
-import kotlin.properties.Delegates
 
 class SnapCameraFragment : Fragment() {
     private var _binding: FragmentSnapCameraBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var diary: Diary
-    private var snapDay by Delegates.notNull<Long>()
+    private lateinit var diaryDay: DiaryDay
 
     private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
     private lateinit var camera: Camera
@@ -79,8 +77,7 @@ class SnapCameraFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            diary = it.serializable<Diary>(ARG_DIARY)!!
-            snapDay = it.getLong(ARG_DAY)
+            diaryDay = it.serializable<DiaryDay>(ARG_DIARY_DAY)!!
         }
 
         cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
@@ -146,7 +143,7 @@ class SnapCameraFragment : Fragment() {
 
     private fun startVideoCapture() {
         val name = listOf(
-            "snap", diary.id, "${snapDay}.mp4"
+            "snap", diaryDay.diary.id, "${diaryDay.day}.mp4"
         ).joinToString(File.separator)
         targetFile = File(requireContext().filesDir, name)
         val fileOutputOptions = FileOutputOptions.Builder(targetFile!!).build()
@@ -178,14 +175,12 @@ class SnapCameraFragment : Fragment() {
     companion object {
         const val TAG = "SnapCameraFragment"
 
-        private const val ARG_DIARY = "diary"
-        private const val ARG_DAY = "snapDay"
+        private const val ARG_DIARY_DAY = "diaryDay"
         private const val MAX_MEDIA_LENGTH_NANO = 3000000000F
 
-        fun newInstance(diary: Diary, day: Long) = SnapCameraFragment().apply {
+        fun newInstance(day: DiaryDay) = SnapCameraFragment().apply {
             arguments = Bundle().apply {
-                putSerializable(ARG_DIARY, diary)
-                putLong(ARG_DAY, day)
+                putSerializable(ARG_DIARY_DAY, day)
             }
         }
     }

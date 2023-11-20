@@ -67,8 +67,7 @@ class SnapCardFragment : Fragment() {
 
             binding.root.setOnClickListener {
                 val intent = Intent(context, CreateSnapActivity::class.java)
-                intent.putExtra("diary", diaryDay.diary)
-                intent.putExtra("snapDay", date)
+                intent.putExtra(ARG_DIARY_DAY, diaryDay)
                 startActivity(intent)
             }
         }

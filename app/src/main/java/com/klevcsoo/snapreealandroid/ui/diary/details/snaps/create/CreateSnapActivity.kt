@@ -10,17 +10,15 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import com.klevcsoo.snapreealandroid.databinding.ActivityCreateSnapBinding
-import com.klevcsoo.snapreealandroid.model.Diary
+import com.klevcsoo.snapreealandroid.model.DiaryDay
+import com.klevcsoo.snapreealandroid.util.getSnapVideoFile
 import com.klevcsoo.snapreealandroid.util.serializable
 import java.io.File
-import java.time.LocalDate
-import kotlin.properties.Delegates
 
 class CreateSnapActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCreateSnapBinding
 
-    private lateinit var diary: Diary
-    private var snapDay by Delegates.notNull<Long>()
+    private lateinit var diaryDay: DiaryDay
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,9 +28,7 @@ class CreateSnapActivity : AppCompatActivity() {
         binding.backButton.setOnClickListener { finish() }
 
         intent.extras?.let {
-            diary = it.serializable<Diary>(ARG_DIARY)!!
-            snapDay = it.serializable<LocalDate>(ARG_DAY)!!.toEpochDay()
-            Log.d(TAG, "$snapDay, $diary")
+            diaryDay = it.serializable<DiaryDay>(ARG_DIARY_DAY)!!
 
             requestRequiredPermissions()
         }
@@ -56,9 +52,18 @@ class CreateSnapActivity : AppCompatActivity() {
             Log.d(TAG, "All permissions in order, showing camera fragment")
             makeActivityFullscreen()
 
-            val fragment = SnapCameraFragment.newInstance(diary, snapDay)
-            supportFragmentManager.commit {
-                replace(binding.contentFragment.id, fragment)
+            if (diaryDay.snap == null) {
+                val fragment = SnapCameraFragment.newInstance(diaryDay)
+                supportFragmentManager.commit {
+                    replace(binding.contentFragment.id, fragment)
+                }
+            } else {
+                getSnapVideoFile(this, diaryDay) {
+                    val fragment = SnapInspectorFragment.newInstance(diaryDay, it)
+                    supportFragmentManager.commit {
+                        replace(binding.contentFragment.id, fragment)
+                    }
+                }
             }
         }
     }
@@ -73,15 +78,15 @@ class CreateSnapActivity : AppCompatActivity() {
         )
     }
 
-    fun inspectSnap(snapFile: File) {
-        val fragment = SnapInspectorFragment.newInstance(diary, snapDay, snapFile)
+    fun inspectSnap(video: File) {
+        val fragment = SnapInspectorFragment.newInstance(diaryDay, video, true)
         supportFragmentManager.commit {
             replace(binding.contentFragment.id, fragment)
         }
     }
 
     fun discardSnap() {
-        val fragment = SnapCameraFragment.newInstance(diary, snapDay)
+        val fragment = SnapCameraFragment.newInstance(diaryDay)
         supportFragmentManager.commit {
             replace(binding.contentFragment.id, fragment)
         }
@@ -114,8 +119,6 @@ class CreateSnapActivity : AppCompatActivity() {
         const val TAG = "CreateSnapActivity"
 
         private const val REQ_PERMISSIONS_RES_CODE = 36375
-
-        private const val ARG_DIARY = "diary"
-        private const val ARG_DAY = "snapDay"
+        private const val ARG_DIARY_DAY = "diaryDay"
     }
 }

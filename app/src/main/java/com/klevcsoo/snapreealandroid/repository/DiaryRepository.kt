@@ -1,16 +1,15 @@
 package com.klevcsoo.snapreealandroid.repository
 
-import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.net.Uri
 import android.util.Log
-import com.arthenica.ffmpegkit.FFmpegKit
-import com.arthenica.ffmpegkit.ReturnCode
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentReference
 import com.klevcsoo.snapreealandroid.model.Diary
+import com.klevcsoo.snapreealandroid.model.DiaryDay
 import com.klevcsoo.snapreealandroid.model.Snap
 import com.klevcsoo.snapreealandroid.service.FirebaseService
+import com.klevcsoo.snapreealandroid.util.calculateIsThumbnailDark
+import com.klevcsoo.snapreealandroid.util.generateThumbnailFor
 import kotlinx.coroutines.tasks.await
 import java.io.File
 import java.util.Date
@@ -156,6 +155,24 @@ class DiaryRepository {
         Log.d(TAG, "Snap added!")
     }
 
+    suspend fun deleteSnap(diaryDay: DiaryDay) {
+        if (auth.currentUser === null) {
+            throw Error("Cannot create diary: user is unauthenticated")
+        }
+
+        val uid = auth.currentUser!!.uid
+
+        val storageRef = storage.reference
+            .child("media/$uid/snaps/${diaryDay.diary.id}/${diaryDay.snap!!.id}")
+        storageRef.child("${diaryDay.day}.mp4").delete().await()
+        storageRef.child("${diaryDay.day}.mp4.jpg").delete().await()
+
+        firestore.collection("users").document(uid)
+            .collection("diaries").document(diaryDay.diary.id)
+            .collection("snaps").document(diaryDay.snap!!.id)
+            .delete().await()
+    }
+
     private suspend fun getSnapDBRef(uid: String, diary: Diary, day: Long): DocumentReference {
         val snapCollection = firestore.collection("users").document(uid)
             .collection("diaries").document(diary.id)
@@ -163,43 +180,6 @@ class DiaryRepository {
 
         val snapshot = snapCollection.limit(1).whereEqualTo("day", day).get().await()
         return if (snapshot.isEmpty) snapCollection.document() else snapshot.documents[0].reference
-    }
-
-    private fun generateThumbnailFor(file: File): File {
-        val outPath = "${file.absolutePath}.jpg"
-        val cmd = "-i ${file.absolutePath} -vframes 1 -q:v 2 $outPath"
-        val session = FFmpegKit.execute(cmd)
-        if (ReturnCode.isSuccess(session.returnCode)) {
-            return File(outPath)
-        } else if (ReturnCode.isCancel(session.returnCode)) {
-            throw Error("FFMpeg session is cancelled.")
-        } else {
-            throw Error("FFMpeg session exited with an error: ${session.failStackTrace}")
-        }
-    }
-
-    private fun calculateIsThumbnailDark(file: File): Boolean {
-        val pixelSpacing = 1
-        val bitmap = BitmapFactory.decodeFile(file.absolutePath)
-
-        var r = 0
-        var g = 0
-        var b = 0
-        val height = bitmap.height
-        val width = bitmap.width
-        val pixels = IntArray(width * height)
-        bitmap.getPixels(pixels, 0, width, 0, 0, width, height)
-        var i = 0
-
-        while (i < pixels.size) {
-            val color = pixels[i]
-            r += Color.red(color)
-            g += Color.green(color)
-            b += Color.blue(color)
-            i += pixelSpacing
-        }
-
-        return (r + b + g) / (pixels.size * 3) > 80
     }
 
     companion object {
