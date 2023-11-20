@@ -2,33 +2,32 @@ package com.klevcsoo.snapreealandroid.ui.diary.details.snaps
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.klevcsoo.snapreealandroid.model.Snap
+import androidx.lifecycle.ViewModelProvider
+import com.klevcsoo.snapreealandroid.model.Diary
+import com.klevcsoo.snapreealandroid.model.DiaryDay
 import com.klevcsoo.snapreealandroid.repository.DiaryRepository
 import java.time.Instant
 import java.time.ZoneId
 import java.util.Calendar
 import java.util.Date
 
-class DiarySnapsViewModel() : ViewModel() {
-    val snaps: MutableLiveData<List<Snap>> = MutableLiveData(listOf())
-    val loading: MutableLiveData<Boolean> = MutableLiveData(false)
-    val days: MutableLiveData<List<Long>> = MutableLiveData(listOf())
+class DiarySnapsViewModel : ViewModel() {
+    val days: MutableLiveData<List<DiaryDay>> = MutableLiveData(listOf())
 
     private val repository = DiaryRepository()
 
-    init {
-        days.value = generateDates()
-    }
-
-    fun load(id: String) {
-        loading.value = true
-        repository.onDiarySnapList(id) {
-            snaps.value = it
-            loading.value = false
+    fun load(diary: Diary) {
+        repository.onDiarySnapList(diary.id) {
+            val mutableDays: MutableList<DiaryDay> = generateDays(diary).toMutableList()
+            it.forEach { snap ->
+                val i = mutableDays.indexOfFirst { diaryDay -> diaryDay.day == snap.day }
+                if (i >= 0) mutableDays[i].snap = snap
+            }
+            days.value = mutableDays
         }
     }
 
-    private fun generateDates(): List<Long> {
+    private fun generateDays(diary: Diary): List<DiaryDay> {
         val calendar = Calendar.getInstance()
         val list = mutableListOf<Date>()
 
@@ -39,8 +38,22 @@ class DiarySnapsViewModel() : ViewModel() {
         }
 
         return list.map { date ->
-            Instant.ofEpochMilli(date.time).atZone(ZoneId.systemDefault())
-                .toLocalDate().toEpochDay()
+            DiaryDay(
+                diary, Instant.ofEpochMilli(date.time).atZone(ZoneId.systemDefault())
+                    .toLocalDate().toEpochDay(), null
+            )
+        }
+    }
+
+    companion object {
+        class DiarySnapsViewModelFactory : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                if (modelClass.isAssignableFrom(DiarySnapsViewModel::class.java)) {
+                    @Suppress("UNCHECKED_CAST")
+                    return DiarySnapsViewModel() as T
+                }
+                throw IllegalArgumentException("Unknown ViewModel class")
+            }
         }
     }
 }

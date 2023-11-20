@@ -1,19 +1,24 @@
 package com.klevcsoo.snapreealandroid.ui.diary.details.snaps
 
 import android.content.Intent
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.klevcsoo.snapreealandroid.R
 import com.klevcsoo.snapreealandroid.databinding.FragmentSnapCardBinding
-import com.klevcsoo.snapreealandroid.model.Diary
-import com.klevcsoo.snapreealandroid.model.Snap
+import com.klevcsoo.snapreealandroid.model.DiaryDay
 import com.klevcsoo.snapreealandroid.ui.diary.details.snaps.create.CreateSnapActivity
 import com.klevcsoo.snapreealandroid.util.serializable
+import com.squareup.picasso.Picasso
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
+
 
 class SnapCardFragment : Fragment() {
     private var _binding: FragmentSnapCardBinding? = null
@@ -31,9 +36,9 @@ class SnapCardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         arguments?.let { bundle ->
-            val day = bundle.getLong(ARG_DAY)
-            val date = LocalDate.ofEpochDay(day)
+            val diaryDay = bundle.serializable<DiaryDay>(ARG_DIARY_DAY)!!
 
+            val date = LocalDate.ofEpochDay(diaryDay.day)
             if (date.dayOfMonth == 1) {
                 binding.dateText.text = date.month.getDisplayName(
                     TextStyle.SHORT, Locale.getDefault()
@@ -46,28 +51,55 @@ class SnapCardFragment : Fragment() {
                 )
             }
 
+            if (diaryDay.snap != null) {
+                Picasso.get().load(diaryDay.snap!!.thumbnailUrl).into(binding.thumbnailImage)
+
+                if (diaryDay.snap!!.isThumbnailDark) {
+                    binding.dateText.setTextColor(
+                        ContextCompat.getColor(requireContext(), R.color.white)
+                    )
+                    binding.dayText.setTextColor(
+                        ContextCompat.getColor(requireContext(), R.color.white)
+                    )
+                    binding.thumbnailImage.colorFilter = dimmedFilter()
+                }
+            }
+
             binding.root.setOnClickListener {
                 val intent = Intent(context, CreateSnapActivity::class.java)
-                intent.putExtra(ARG_DIARY, bundle.serializable<Diary>(ARG_DIARY))
-                intent.putExtra(ARG_DAY, date)
+                intent.putExtra("diary", diaryDay.diary)
+                intent.putExtra("snapDay", date)
                 startActivity(intent)
             }
         }
     }
 
+    private fun dimmedFilter(): ColorMatrixColorFilter {
+        val fb = -50F
+        val cmB = ColorMatrix()
+        cmB.set(
+            floatArrayOf(
+                1f, 0f, 0f, 0f, fb,
+                0f, 1f, 0f, 0f, fb,
+                0f, 0f, 1f, 0f, fb,
+                0f, 0f, 0f, 1f, 0f
+            )
+        )
+        val colorMatrix = ColorMatrix()
+        colorMatrix.set(cmB)
+        return ColorMatrixColorFilter(colorMatrix)
+    }
+
+
     companion object {
-        private const val ARG_DIARY = "diary"
-        private const val ARG_DAY = "snapDay"
-        private const val ARG_SNAP = "snap"
+        private const val ARG_DIARY_DAY = "diaryDay"
 
         @Suppress("unused")
         const val TAG = "SnapCardFragment"
 
-        fun newInstance(diary: Diary, day: Long, snap: Snap?) = SnapCardFragment().apply {
+        fun newInstance(day: DiaryDay) = SnapCardFragment().apply {
             arguments = Bundle().apply {
-                putSerializable(ARG_DIARY, diary)
-                putSerializable(ARG_SNAP, snap)
-                putLong(ARG_DAY, day)
+                putSerializable(ARG_DIARY_DAY, day)
             }
         }
     }
