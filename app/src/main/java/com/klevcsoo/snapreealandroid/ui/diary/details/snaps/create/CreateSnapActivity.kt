@@ -1,13 +1,19 @@
 package com.klevcsoo.snapreealandroid.ui.diary.details.snaps.create
 
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.WindowInsetsController
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.commit
+import com.klevcsoo.snapreealandroid.R
 import com.klevcsoo.snapreealandroid.databinding.ActivityCreateSnapBinding
 import com.klevcsoo.snapreealandroid.model.Diary
 import com.klevcsoo.snapreealandroid.util.serializable
+import java.io.File
 import java.time.LocalDate
 
 class CreateSnapActivity : AppCompatActivity() {
@@ -27,13 +33,7 @@ class CreateSnapActivity : AppCompatActivity() {
             diary = it.serializable<Diary>(ARG_DIARY) ?: return
             snapDate = it.serializable<LocalDate>(ARG_DATE) ?: return
 
-            requestPermissions(
-                arrayOf(
-                    android.Manifest.permission.CAMERA,
-                    android.Manifest.permission.RECORD_AUDIO,
-                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                ), REQ_PERMISSIONS_RES_CODE
-            )
+            requestRequiredPermissions()
         }
     }
 
@@ -52,15 +52,66 @@ class CreateSnapActivity : AppCompatActivity() {
                 return
             }
 
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-            )
+            Log.d(TAG, "All permissions in order, showing camera fragment")
+            makeActivityFullscreen()
 
             val fragment = SnapCameraFragment.newInstance(diary, snapDate)
-            supportFragmentManager.beginTransaction()
-                .replace(binding.cameraFragmentContainer.id, fragment)
-                .commit()
+            supportFragmentManager.commit {
+                replace(binding.contentFragment.id, fragment)
+            }
+        }
+    }
+
+    fun requestRequiredPermissions() {
+        requestPermissions(
+            arrayOf(
+                android.Manifest.permission.CAMERA,
+                android.Manifest.permission.RECORD_AUDIO,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            ), REQ_PERMISSIONS_RES_CODE
+        )
+    }
+
+    fun inspectSnap(snapFile: File) {
+        val fragment = SnapInspectorFragment.newInstance(diary, snapDate, snapFile)
+        supportFragmentManager.commit {
+            setCustomAnimations(
+                R.anim.slide_in, R.anim.fade_out, R.anim.fade_in, R.anim.slide_out
+            )
+            replace(binding.contentFragment.id, fragment)
+        }
+    }
+
+    fun discardSnap() {
+        val fragment = SnapCameraFragment.newInstance(diary, snapDate)
+        supportFragmentManager.commit {
+            setCustomAnimations(
+                R.anim.slide_out, R.anim.fade_out, R.anim.fade_in, R.anim.slide_in
+            )
+            replace(binding.contentFragment.id, fragment)
+        }
+    }
+
+    private fun makeActivityFullscreen() {
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+        )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.insetsController?.setSystemBarsAppearance(
+                WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,
+                WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+            )
+            window.insetsController?.setSystemBarsAppearance(
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+            )
+        } else {
+            val decorView = window.decorView
+            @Suppress("DEPRECATION")
+            decorView.systemUiVisibility =
+                decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
         }
     }
 

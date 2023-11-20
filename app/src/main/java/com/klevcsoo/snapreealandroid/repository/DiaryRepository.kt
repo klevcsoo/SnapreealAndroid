@@ -7,11 +7,14 @@ import com.klevcsoo.snapreealandroid.model.Diary
 import com.klevcsoo.snapreealandroid.model.Snap
 import com.klevcsoo.snapreealandroid.service.FirebaseService
 import kotlinx.coroutines.tasks.await
+import java.io.File
+import java.time.LocalDate
 import java.util.Date
 
 class DiaryRepository {
     private val auth = FirebaseService.instance.auth
     private val firestore = FirebaseService.instance.firestore
+    private val storage = FirebaseService.instance.storage
 
     fun onDiaryList(listener: (diaries: List<Diary>) -> Unit) {
         Log.d(TAG, "Fetching diaries...")
@@ -107,6 +110,16 @@ class DiaryRepository {
 
         return firestore.collection("users").document(auth.currentUser!!.uid)
             .collection("diaries").add(data).await()
+    }
+
+    suspend fun uploadSnap(diary: Diary, date: LocalDate, file: File) {
+        if (auth.currentUser === null) {
+            throw Error("Cannot create diary: user is unauthenticated")
+        }
+
+        val uid = auth.currentUser!!.uid
+
+        TODO("Not yet implemented")
     }
 
     companion object {

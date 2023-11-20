@@ -39,7 +39,7 @@ class DiarySnapsViewModel() : ViewModel() {
             calendar.add(Calendar.DAY_OF_YEAR, -i)
         }
 
-        return list.reversed().map { date ->
+        return list.map { date ->
             Instant.ofEpochMilli(date.time).atZone(ZoneId.systemDefault())
                 .toLocalDate()
         }

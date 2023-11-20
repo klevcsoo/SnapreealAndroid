@@ -1,20 +1,19 @@
 package com.klevcsoo.snapreealandroid.ui.diary.details.snaps.create
 
 import android.Manifest
-import android.content.ContentValues
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.video.MediaStoreOutputOptions
+import androidx.camera.video.FileOutputOptions
 import androidx.camera.video.Quality
 import androidx.camera.video.QualitySelector
 import androidx.camera.video.Recorder
@@ -27,10 +26,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.util.Consumer
 import androidx.fragment.app.Fragment
 import com.google.common.util.concurrent.ListenableFuture
+import com.klevcsoo.snapreealandroid.R
 import com.klevcsoo.snapreealandroid.databinding.FragmentSnapCameraBinding
 import com.klevcsoo.snapreealandroid.model.Diary
 import com.klevcsoo.snapreealandroid.util.serializable
+import java.io.File
 import java.time.LocalDate
+import kotlin.math.roundToInt
 
 class SnapCameraFragment : Fragment() {
     private var _binding: FragmentSnapCameraBinding? = null
@@ -45,21 +47,30 @@ class SnapCameraFragment : Fragment() {
     private lateinit var videoCapture: VideoCapture<Recorder>
     private var recording: Recording? = null
     private var cameraLensFacing = CameraSelector.LENS_FACING_BACK
+    private var targetFile: File? = null
 
     private val recordingListener = Consumer<VideoRecordEvent> { event ->
         when (event) {
             is VideoRecordEvent.Start -> {
                 Log.d(TAG, "Video capture started")
+                binding.captureButton.icon = AppCompatResources
+                    .getDrawable(requireContext(), R.drawable.rounded_stop_48)
             }
 
             is VideoRecordEvent.Status -> {
-                Log.d(TAG, "Video length: ${event.recordingStats.recordedDurationNanos}")
+                val percent = event.recordingStats.recordedDurationNanos / MAX_MEDIA_LENGTH_NANO
+                val progress = (100 - percent * 100).roundToInt()
+                binding.captureProgressIndicator.progress = progress
+
+                if (progress <= 0) stopVideoCapture()
             }
 
             is VideoRecordEvent.Finalize -> {
                 Log.d(TAG, "Video capture stopped")
                 recording?.close()
                 recording = null
+                binding.captureButton.icon = AppCompatResources
+                    .getDrawable(requireContext(), R.drawable.rounded_fiber_manual_record_48)
             }
         }
     }
@@ -134,39 +145,34 @@ class SnapCameraFragment : Fragment() {
     }
 
     private fun startVideoCapture() {
-        val name = "snapreeal_${diary.name}_${snapDate.toEpochDay()}"
-        val contentValues = ContentValues().apply {
-            put(MediaStore.Video.Media.DISPLAY_NAME, name)
-            put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4")
-        }
-        val mediaStoreOutputOptions = MediaStoreOutputOptions
-            .Builder(requireActivity().contentResolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
-            .setContentValues(contentValues)
-            .build()
+        val name = listOf(
+            "snap", diary.id, "${snapDate.toEpochDay()}.mp4"
+        ).joinToString(File.separator)
+        targetFile = File(requireContext().filesDir, name)
+        val fileOutputOptions = FileOutputOptions.Builder(targetFile!!).build()
 
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.RECORD_AUDIO
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+            (requireActivity() as CreateSnapActivity).requestRequiredPermissions()
             return
         }
+
         recording = videoCapture.output
-            .prepareRecording(requireContext(), mediaStoreOutputOptions)
+            .prepareRecording(requireContext(), fileOutputOptions)
             .withAudioEnabled()
             .start(ContextCompat.getMainExecutor(requireActivity()), recordingListener)
-
     }
 
     private fun stopVideoCapture() {
         recording?.stop()
+
+        if (recording == null) {
+            (requireActivity() as CreateSnapActivity)
+                .inspectSnap(targetFile!!)
+        }
     }
 
     companion object {
@@ -174,6 +180,7 @@ class SnapCameraFragment : Fragment() {
 
         private const val ARG_DIARY = "diary"
         private const val ARG_DATE = "snapDate"
+        private const val MAX_MEDIA_LENGTH_NANO = 3000000000F
 
         fun newInstance(diary: Diary, date: LocalDate) = SnapCameraFragment().apply {
             arguments = Bundle().apply {
