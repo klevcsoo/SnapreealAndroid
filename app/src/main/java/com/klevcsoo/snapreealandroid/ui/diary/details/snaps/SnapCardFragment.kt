@@ -31,7 +31,8 @@ class SnapCardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         arguments?.let { bundle ->
-            val date = bundle.serializable<LocalDate>(ARG_DATE)!!
+            val day = bundle.getLong(ARG_DAY)
+            val date = LocalDate.ofEpochDay(day)
 
             if (date.dayOfMonth == 1) {
                 binding.dateText.text = date.month.getDisplayName(
@@ -48,7 +49,7 @@ class SnapCardFragment : Fragment() {
             binding.root.setOnClickListener {
                 val intent = Intent(context, CreateSnapActivity::class.java)
                 intent.putExtra(ARG_DIARY, bundle.serializable<Diary>(ARG_DIARY))
-                intent.putExtra(ARG_DATE, date)
+                intent.putExtra(ARG_DAY, date)
                 startActivity(intent)
             }
         }
@@ -56,17 +57,17 @@ class SnapCardFragment : Fragment() {
 
     companion object {
         private const val ARG_DIARY = "diary"
-        private const val ARG_DATE = "snapDate"
+        private const val ARG_DAY = "snapDay"
         private const val ARG_SNAP = "snap"
 
         @Suppress("unused")
         const val TAG = "SnapCardFragment"
 
-        fun newInstance(diary: Diary, date: LocalDate, snap: Snap?) = SnapCardFragment().apply {
+        fun newInstance(diary: Diary, day: Long, snap: Snap?) = SnapCardFragment().apply {
             arguments = Bundle().apply {
                 putSerializable(ARG_DIARY, diary)
                 putSerializable(ARG_SNAP, snap)
-                putSerializable(ARG_DATE, date)
+                putLong(ARG_DAY, day)
             }
         }
     }

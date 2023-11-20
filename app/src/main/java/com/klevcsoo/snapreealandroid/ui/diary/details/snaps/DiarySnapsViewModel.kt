@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import com.klevcsoo.snapreealandroid.model.Snap
 import com.klevcsoo.snapreealandroid.repository.DiaryRepository
 import java.time.Instant
-import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Calendar
 import java.util.Date
@@ -13,12 +12,12 @@ import java.util.Date
 class DiarySnapsViewModel() : ViewModel() {
     val snaps: MutableLiveData<List<Snap>> = MutableLiveData(listOf())
     val loading: MutableLiveData<Boolean> = MutableLiveData(false)
-    val dates: MutableLiveData<List<LocalDate>> = MutableLiveData(listOf())
+    val days: MutableLiveData<List<Long>> = MutableLiveData(listOf())
 
     private val repository = DiaryRepository()
 
     init {
-        dates.value = generateDates()
+        days.value = generateDates()
     }
 
     fun load(id: String) {
@@ -29,7 +28,7 @@ class DiarySnapsViewModel() : ViewModel() {
         }
     }
 
-    private fun generateDates(): List<LocalDate> {
+    private fun generateDates(): List<Long> {
         val calendar = Calendar.getInstance()
         val list = mutableListOf<Date>()
 
@@ -41,7 +40,7 @@ class DiarySnapsViewModel() : ViewModel() {
 
         return list.map { date ->
             Instant.ofEpochMilli(date.time).atZone(ZoneId.systemDefault())
-                .toLocalDate()
+                .toLocalDate().toEpochDay()
         }
     }
 }

@@ -14,7 +14,7 @@ import com.klevcsoo.snapreealandroid.repository.DiaryRepository
 import com.klevcsoo.snapreealandroid.util.serializable
 import kotlinx.coroutines.launch
 import java.io.File
-import java.time.LocalDate
+import kotlin.properties.Delegates
 
 class SnapInspectorFragment : Fragment() {
     private var _binding: FragmentSnapInspectorBinding? = null
@@ -23,14 +23,14 @@ class SnapInspectorFragment : Fragment() {
     private val repository = DiaryRepository()
 
     private lateinit var diary: Diary
-    private lateinit var snapDate: LocalDate
+    private var snapDay by Delegates.notNull<Long>()
     private lateinit var snapFile: File
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             diary = it.serializable<Diary>(ARG_DIARY)!!
-            snapDate = it.serializable<LocalDate>(ARG_SNAP_DATE)!!
+            snapDay = it.getLong(ARG_SNAP_DAY)
             snapFile = it.serializable<File>(ARG_SNAP_FILE)!!
         }
     }
@@ -57,7 +57,7 @@ class SnapInspectorFragment : Fragment() {
         binding.uploadButton.isEnabled = false
         binding.discardButton.isEnabled = false
         requireActivity().lifecycleScope.launch {
-            repository.uploadSnap(diary, snapDate, snapFile)
+            repository.uploadSnap(diary, snapDay, snapFile)
         }.invokeOnCompletion {
             if (it != null) {
                 Log.w(TAG, "Failed to upload snap", it)
@@ -76,15 +76,15 @@ class SnapInspectorFragment : Fragment() {
         const val TAG = "SnapInspectorFragment"
 
         private const val ARG_DIARY = "diary"
-        private const val ARG_SNAP_DATE = "snapDate"
+        private const val ARG_SNAP_DAY = "snapDay"
         private const val ARG_SNAP_FILE = "snapFile"
 
         @JvmStatic
-        fun newInstance(diary: Diary, snapDate: LocalDate, snapFile: File) =
+        fun newInstance(diary: Diary, day: Long, snapFile: File) =
             SnapInspectorFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable(ARG_DIARY, diary)
-                    putSerializable(ARG_SNAP_DATE, snapDate)
+                    putLong(ARG_SNAP_DAY, day)
                     putSerializable(ARG_SNAP_FILE, snapFile)
                 }
             }

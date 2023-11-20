@@ -8,7 +8,6 @@ import com.klevcsoo.snapreealandroid.model.Snap
 import com.klevcsoo.snapreealandroid.service.FirebaseService
 import kotlinx.coroutines.tasks.await
 import java.io.File
-import java.time.LocalDate
 import java.util.Date
 
 class DiaryRepository {
@@ -112,7 +111,7 @@ class DiaryRepository {
             .collection("diaries").add(data).await()
     }
 
-    suspend fun uploadSnap(diary: Diary, date: LocalDate, file: File) {
+    suspend fun uploadSnap(diary: Diary, day: Long, file: File) {
         if (auth.currentUser === null) {
             throw Error("Cannot create diary: user is unauthenticated")
         }

@@ -14,13 +14,13 @@ import com.klevcsoo.snapreealandroid.databinding.ActivityCreateSnapBinding
 import com.klevcsoo.snapreealandroid.model.Diary
 import com.klevcsoo.snapreealandroid.util.serializable
 import java.io.File
-import java.time.LocalDate
+import kotlin.properties.Delegates
 
 class CreateSnapActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCreateSnapBinding
 
     private lateinit var diary: Diary
-    private lateinit var snapDate: LocalDate
+    private var snapDay by Delegates.notNull<Long>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +31,7 @@ class CreateSnapActivity : AppCompatActivity() {
 
         intent.extras?.let {
             diary = it.serializable<Diary>(ARG_DIARY) ?: return
-            snapDate = it.serializable<LocalDate>(ARG_DATE) ?: return
+            snapDay = it.getLong(ARG_DAY)
 
             requestRequiredPermissions()
         }
@@ -55,7 +55,7 @@ class CreateSnapActivity : AppCompatActivity() {
             Log.d(TAG, "All permissions in order, showing camera fragment")
             makeActivityFullscreen()
 
-            val fragment = SnapCameraFragment.newInstance(diary, snapDate)
+            val fragment = SnapCameraFragment.newInstance(diary, snapDay)
             supportFragmentManager.commit {
                 replace(binding.contentFragment.id, fragment)
             }
@@ -73,7 +73,7 @@ class CreateSnapActivity : AppCompatActivity() {
     }
 
     fun inspectSnap(snapFile: File) {
-        val fragment = SnapInspectorFragment.newInstance(diary, snapDate, snapFile)
+        val fragment = SnapInspectorFragment.newInstance(diary, snapDay, snapFile)
         supportFragmentManager.commit {
             setCustomAnimations(
                 R.anim.slide_in, R.anim.fade_out, R.anim.fade_in, R.anim.slide_out
@@ -83,7 +83,7 @@ class CreateSnapActivity : AppCompatActivity() {
     }
 
     fun discardSnap() {
-        val fragment = SnapCameraFragment.newInstance(diary, snapDate)
+        val fragment = SnapCameraFragment.newInstance(diary, snapDay)
         supportFragmentManager.commit {
             setCustomAnimations(
                 R.anim.slide_out, R.anim.fade_out, R.anim.fade_in, R.anim.slide_in
@@ -121,6 +121,6 @@ class CreateSnapActivity : AppCompatActivity() {
         private const val REQ_PERMISSIONS_RES_CODE = 36375
 
         private const val ARG_DIARY = "diary"
-        private const val ARG_DATE = "snapDate"
+        private const val ARG_DAY = "snapDay"
     }
 }

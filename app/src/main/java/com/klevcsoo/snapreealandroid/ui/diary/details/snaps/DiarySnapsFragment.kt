@@ -51,7 +51,7 @@ class DiarySnapsFragment : Fragment() {
         viewModel.load(diary!!.id)
 
         lifecycleScope.launch {
-            viewModel.dates.observe(viewLifecycleOwner) { dates ->
+            viewModel.days.observe(viewLifecycleOwner) { dates ->
                 val transaction = parentFragmentManager.beginTransaction()
                 val rows: MutableList<TableRow> = mutableListOf()
 

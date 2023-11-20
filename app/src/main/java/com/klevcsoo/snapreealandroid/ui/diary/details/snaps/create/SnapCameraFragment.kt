@@ -31,15 +31,15 @@ import com.klevcsoo.snapreealandroid.databinding.FragmentSnapCameraBinding
 import com.klevcsoo.snapreealandroid.model.Diary
 import com.klevcsoo.snapreealandroid.util.serializable
 import java.io.File
-import java.time.LocalDate
 import kotlin.math.roundToInt
+import kotlin.properties.Delegates
 
 class SnapCameraFragment : Fragment() {
     private var _binding: FragmentSnapCameraBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var diary: Diary
-    private lateinit var snapDate: LocalDate
+    private var snapDay by Delegates.notNull<Long>()
 
     private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
     private lateinit var camera: Camera
@@ -80,7 +80,7 @@ class SnapCameraFragment : Fragment() {
 
         arguments?.let {
             diary = it.serializable<Diary>(ARG_DIARY)!!
-            snapDate = it.serializable<LocalDate>(ARG_DATE)!!
+            snapDay = it.getLong(ARG_DAY)
         }
 
         cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
@@ -146,7 +146,7 @@ class SnapCameraFragment : Fragment() {
 
     private fun startVideoCapture() {
         val name = listOf(
-            "snap", diary.id, "${snapDate.toEpochDay()}.mp4"
+            "snap", diary.id, "${snapDay}.mp4"
         ).joinToString(File.separator)
         targetFile = File(requireContext().filesDir, name)
         val fileOutputOptions = FileOutputOptions.Builder(targetFile!!).build()
@@ -179,13 +179,13 @@ class SnapCameraFragment : Fragment() {
         const val TAG = "SnapCameraFragment"
 
         private const val ARG_DIARY = "diary"
-        private const val ARG_DATE = "snapDate"
+        private const val ARG_DAY = "snapDay"
         private const val MAX_MEDIA_LENGTH_NANO = 3000000000F
 
-        fun newInstance(diary: Diary, date: LocalDate) = SnapCameraFragment().apply {
+        fun newInstance(diary: Diary, day: Long) = SnapCameraFragment().apply {
             arguments = Bundle().apply {
                 putSerializable(ARG_DIARY, diary)
-                putSerializable(ARG_DATE, date)
+                putLong(ARG_DAY, day)
             }
         }
     }
