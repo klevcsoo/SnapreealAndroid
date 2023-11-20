@@ -72,6 +72,7 @@ dependencies {
     implementation("androidx.camera:camera-video:1.4.0-alpha02")
     implementation("androidx.camera:camera-extensions:1.4.0-alpha02")
     implementation("androidx.fragment:fragment-ktx:1.7.0-alpha06")
+    implementation("com.arthenica:ffmpeg-kit-full-gpl:6.0.LTS")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

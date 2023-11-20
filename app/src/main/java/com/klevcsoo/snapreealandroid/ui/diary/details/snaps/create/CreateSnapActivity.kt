@@ -9,11 +9,11 @@ import android.view.WindowInsetsController
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
-import com.klevcsoo.snapreealandroid.R
 import com.klevcsoo.snapreealandroid.databinding.ActivityCreateSnapBinding
 import com.klevcsoo.snapreealandroid.model.Diary
 import com.klevcsoo.snapreealandroid.util.serializable
 import java.io.File
+import java.time.LocalDate
 import kotlin.properties.Delegates
 
 class CreateSnapActivity : AppCompatActivity() {
@@ -30,8 +30,9 @@ class CreateSnapActivity : AppCompatActivity() {
         binding.backButton.setOnClickListener { finish() }
 
         intent.extras?.let {
-            diary = it.serializable<Diary>(ARG_DIARY) ?: return
-            snapDay = it.getLong(ARG_DAY)
+            diary = it.serializable<Diary>(ARG_DIARY)!!
+            snapDay = it.serializable<LocalDate>(ARG_DAY)!!.toEpochDay()
+            Log.d(TAG, "$snapDay, $diary")
 
             requestRequiredPermissions()
         }
@@ -75,9 +76,6 @@ class CreateSnapActivity : AppCompatActivity() {
     fun inspectSnap(snapFile: File) {
         val fragment = SnapInspectorFragment.newInstance(diary, snapDay, snapFile)
         supportFragmentManager.commit {
-            setCustomAnimations(
-                R.anim.slide_in, R.anim.fade_out, R.anim.fade_in, R.anim.slide_out
-            )
             replace(binding.contentFragment.id, fragment)
         }
     }
@@ -85,9 +83,6 @@ class CreateSnapActivity : AppCompatActivity() {
     fun discardSnap() {
         val fragment = SnapCameraFragment.newInstance(diary, snapDay)
         supportFragmentManager.commit {
-            setCustomAnimations(
-                R.anim.slide_out, R.anim.fade_out, R.anim.fade_in, R.anim.slide_in
-            )
             replace(binding.contentFragment.id, fragment)
         }
     }
