@@ -9,10 +9,13 @@ import android.view.WindowInsetsController
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
+import androidx.lifecycle.lifecycleScope
 import com.klevcsoo.snapreealandroid.databinding.ActivityCreateSnapBinding
 import com.klevcsoo.snapreealandroid.model.DiaryDay
 import com.klevcsoo.snapreealandroid.repository.MediaRepository
 import com.klevcsoo.snapreealandroid.util.serializable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 
 class CreateSnapActivity : AppCompatActivity() {
@@ -60,8 +63,10 @@ class CreateSnapActivity : AppCompatActivity() {
                     replace(binding.contentFragment.id, fragment)
                 }
             } else {
-                mediaRepository.getSnapVideoFile(this, diaryDay) {
-                    val fragment = SnapInspectorFragment.newInstance(diaryDay, it)
+                val context = this
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val file = mediaRepository.getSnapVideoFile(context, diaryDay)
+                    val fragment = SnapInspectorFragment.newInstance(diaryDay, file)
                     supportFragmentManager.commit {
                         replace(binding.contentFragment.id, fragment)
                     }

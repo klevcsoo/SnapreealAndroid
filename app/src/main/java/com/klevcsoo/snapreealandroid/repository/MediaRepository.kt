@@ -2,7 +2,6 @@ package com.klevcsoo.snapreealandroid.repository
 
 import android.content.Context
 import android.util.Log
-import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.klevcsoo.snapreealandroid.model.Diary
 import com.klevcsoo.snapreealandroid.model.DiaryDay
@@ -18,36 +17,28 @@ import java.net.URL
 class MediaRepository {
     private val diaryRepository = DiaryRepository()
 
-    fun getSnapVideoFile(context: Context, diaryDay: DiaryDay, callback: (file: File) -> Unit) {
+    suspend fun getSnapVideoFile(context: Context, diaryDay: DiaryDay): File {
         val localFilePath = listOf(
-            "snap", diaryDay.diary.id, "${diaryDay.day}.mp4"
+            "diary", diaryDay.diary.id, "${diaryDay.day}.mp4"
         ).joinToString(File.separator)
 
-        val cachedFile = File(context.filesDir, localFilePath)
-        if (cachedFile.exists()) {
-            callback(cachedFile)
-            return
-        }
-
-        URL(diaryDay.snap!!.videoUrl).openStream().use { input ->
-            FileOutputStream(File(localFilePath)).use { output ->
-                input.copyTo(output)
-                callback(File(localFilePath))
+        val cachedFile = File(context.cacheDir, localFilePath)
+        return if (cachedFile.exists()) cachedFile else TaskCompletionSource<File>().apply {
+            URL(diaryDay.snap!!.videoUrl).openStream().use { input ->
+                cachedFile.parentFile?.mkdirs()
+                FileOutputStream(cachedFile).use { output ->
+                    input.copyTo(output)
+                    setResult(cachedFile)
+                }
             }
-        }
-    }
-
-    fun getSnapVideoFile(context: Context, diaryDay: DiaryDay): Task<File> {
-        val res = TaskCompletionSource<File>()
-        getSnapVideoFile(context, diaryDay) { res.setResult(it) }
-        return res.task
+        }.task.await()
     }
 
     suspend fun generateDiaryVideo(context: Context, diary: Diary): File {
         return withContext(Dispatchers.IO) {
             val snaps = diaryRepository.getDiarySnapList(diary)
             val videos = snaps.map {
-                getSnapVideoFile(context, DiaryDay(diary, it.day, it)).await()
+                getSnapVideoFile(context, DiaryDay(diary, it.day, it))
             }
 
             Log.d(DiaryVideoViewModel.TAG, "Generating video...")
