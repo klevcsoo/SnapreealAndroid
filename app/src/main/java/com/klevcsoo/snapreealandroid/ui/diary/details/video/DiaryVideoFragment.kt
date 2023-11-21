@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -35,7 +36,9 @@ class DiaryVideoFragment : Fragment() {
         viewModel.videoFile.observe(viewLifecycleOwner) { file ->
             if (file != null) {
                 binding.saveButton.setOnClickListener {
-                    viewModel.saveToGallery()
+                    viewModel.saveToGallery(requireContext(), diary)
+                    Toast.makeText(requireContext(), "saved to gallery!", Toast.LENGTH_LONG)
+                        .show()
                 }
 
                 binding.videoPreview.setVideoPath(file.path)

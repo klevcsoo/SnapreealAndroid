@@ -1,6 +1,8 @@
 package com.klevcsoo.snapreealandroid.ui.diary.details.video
 
 import android.content.Context
+import android.media.MediaScannerConnection
+import android.os.Environment
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -24,7 +26,27 @@ class DiaryVideoViewModel : ViewModel() {
         }
     }
 
-    fun saveToGallery() {}
+    fun saveToGallery(context: Context, diary: Diary) {
+        if (videoFile.value == null) {
+            return
+        }
+
+        val now = System.currentTimeMillis()
+        val publicVideoFile = File(
+            Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_MOVIES
+            ),
+            listOf("snapreeal", "generated", "diary_${diary.id}_$now").joinToString(File.separator)
+        )
+
+        videoFile.value!!.copyTo(publicVideoFile, overwrite = true)
+        MediaScannerConnection.scanFile(
+            context,
+            arrayOf(publicVideoFile.absolutePath),
+            arrayOf("video/mp4"),
+            null
+        )
+    }
 
     companion object {
         const val TAG = "DiaryVideoViewModel"
