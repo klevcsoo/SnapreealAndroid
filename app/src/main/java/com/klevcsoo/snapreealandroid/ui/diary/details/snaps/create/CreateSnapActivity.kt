@@ -11,11 +11,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import com.klevcsoo.snapreealandroid.databinding.ActivityCreateSnapBinding
 import com.klevcsoo.snapreealandroid.model.DiaryDay
-import com.klevcsoo.snapreealandroid.util.getSnapVideoFile
+import com.klevcsoo.snapreealandroid.repository.MediaRepository
 import com.klevcsoo.snapreealandroid.util.serializable
 import java.io.File
 
 class CreateSnapActivity : AppCompatActivity() {
+    private val mediaRepository = MediaRepository()
+
     private lateinit var binding: ActivityCreateSnapBinding
 
     private lateinit var diaryDay: DiaryDay
@@ -58,7 +60,7 @@ class CreateSnapActivity : AppCompatActivity() {
                     replace(binding.contentFragment.id, fragment)
                 }
             } else {
-                getSnapVideoFile(this, diaryDay) {
+                mediaRepository.getSnapVideoFile(this, diaryDay) {
                     val fragment = SnapInspectorFragment.newInstance(diaryDay, it)
                     supportFragmentManager.commit {
                         replace(binding.contentFragment.id, fragment)

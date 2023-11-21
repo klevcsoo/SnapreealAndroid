@@ -51,6 +51,12 @@ class SnapCardFragment : Fragment() {
                 )
             }
 
+            if (date.dayOfYear == LocalDate.now().dayOfYear) {
+                binding.root.setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.primary_300)
+                )
+            }
+
             if (diaryDay.snap != null) {
                 Picasso.get().load(diaryDay.snap!!.thumbnailUrl).into(binding.thumbnailImage)
 

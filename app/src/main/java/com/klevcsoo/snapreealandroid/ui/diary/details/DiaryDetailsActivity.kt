@@ -9,6 +9,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.klevcsoo.snapreealandroid.databinding.ActivityDiaryDetailsBinding
 import com.klevcsoo.snapreealandroid.model.Diary
 import com.klevcsoo.snapreealandroid.ui.diary.details.snaps.DiarySnapsFragment
+import com.klevcsoo.snapreealandroid.ui.diary.details.video.DiaryVideoFragment
 import com.klevcsoo.snapreealandroid.util.serializable
 
 class DiaryDetailsActivity : AppCompatActivity() {
@@ -32,7 +33,8 @@ class DiaryDetailsActivity : AppCompatActivity() {
                 binding.titleText.text = it.name
                 binding.mainPager.adapter = DiaryPageContentAdapter(
                     listOf(
-                        DiarySnapsFragment.newInstance(it)
+                        DiarySnapsFragment.newInstance(it),
+                        DiaryVideoFragment.newInstance(diary)
                     ), this
                 )
             }

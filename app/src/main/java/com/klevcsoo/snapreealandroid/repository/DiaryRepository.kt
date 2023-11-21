@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Log
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.Query
 import com.klevcsoo.snapreealandroid.model.Diary
 import com.klevcsoo.snapreealandroid.model.DiaryDay
 import com.klevcsoo.snapreealandroid.model.Snap
@@ -36,7 +37,7 @@ class DiaryRepository {
             }
 
             try {
-                val diaries = snapshot!!.map { diarySnapshot -> Diary.createFrom(diarySnapshot) }
+                val diaries = snapshot!!.map { Diary.createFrom(it) }
                 Log.d(TAG, "${diaries.size} diaries found")
                 listener(diaries)
             } catch (e: Error) {
@@ -73,6 +74,22 @@ class DiaryRepository {
         }
     }
 
+    suspend fun getDiarySnapList(diary: Diary): List<Snap> {
+        Log.d(TAG, "Fetching diary snaps...")
+
+        if (auth.currentUser === null) {
+            throw Error("Cannot load diary snaps: user is unauthenticated")
+        }
+
+        val snapshot = firestore.collection("users").document(auth.currentUser!!.uid)
+            .collection("diaries").document(diary.id)
+            .collection("snaps")
+            .orderBy("day", Query.Direction.ASCENDING)
+            .get().await()
+
+        return snapshot.documents.map { Snap.createFrom(it) }
+    }
+
     fun onDiarySnapList(id: String, listener: (snaps: List<Snap>) -> Unit) {
         Log.d(TAG, "Fetching diary snaps...")
 
@@ -91,7 +108,7 @@ class DiaryRepository {
             }
 
             try {
-                val snaps = snapshot!!.map { snapSnapshot -> Snap.createFrom(snapSnapshot) }
+                val snaps = snapshot!!.map { Snap.createFrom(it) }
                 Log.d(TAG, "${snaps.size} snaps found in diary $id")
                 listener(snaps)
             } catch (e: Error) {

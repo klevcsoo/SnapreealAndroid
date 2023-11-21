@@ -1,5 +1,6 @@
 package com.klevcsoo.snapreealandroid.util
 
+import android.content.Context
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import com.arthenica.ffmpegkit.FFmpegKit
@@ -44,4 +45,26 @@ fun calculateIsThumbnailDark(file: File): Boolean {
     }
 
     return (r + b + g) / (pixels.size * 3) > 80
+}
+
+fun concatVideoFiles(context: Context, videos: List<File>): File {
+    val workDir = File(context.cacheDir, "diary_render")
+    if (workDir.exists()) workDir.deleteRecursively()
+    workDir.mkdir()
+
+    val videoRepoFile = File(workDir.absolutePath, "video_repo.txt")
+    videoRepoFile.printWriter().use { out ->
+        videos.forEach { out.println("file '${it.absolutePath}'") }
+    }
+
+    val outFile = File(workDir.absolutePath, "generated.mp4")
+    val cmd = "-f concat -safe 0 -i ${videoRepoFile.absolutePath} -c copy ${outFile.absolutePath}"
+    val session = FFmpegKit.execute(cmd)
+    if (ReturnCode.isSuccess(session.returnCode)) {
+        return outFile
+    } else if (ReturnCode.isCancel(session.returnCode)) {
+        throw Error("FFMpeg session is cancelled.")
+    } else {
+        throw Error("FFMpeg session exited with an error: ${session.failStackTrace}")
+    }
 }

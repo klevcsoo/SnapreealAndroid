@@ -16,4 +16,7 @@
     <string name="switch_cameras">switch cameras</string>
     <string name="upload_your_snap">upload your snap</string>
     <string name="upload_snap">upload snap</string>
+    <string name="save_to_gallery">save to gallery</string>
+    <string name="generating_your_video">generating your video…</string>
+    <string name="generate_video">generate video</string>
 </resources>
