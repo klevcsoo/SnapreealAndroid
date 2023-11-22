@@ -5,15 +5,24 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import com.klevcsoo.snapreealandroid.R
 import com.klevcsoo.snapreealandroid.databinding.FragmentDiaryCardBinding
 import com.klevcsoo.snapreealandroid.model.Diary
+import com.klevcsoo.snapreealandroid.repository.DiaryRepository
 import com.klevcsoo.snapreealandroid.ui.diary.details.DiaryDetailsActivity
 import com.klevcsoo.snapreealandroid.util.serializable
+import com.squareup.picasso.Picasso
+import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 private const val ARG_DIARY = "diary"
 
 class DiaryCardFragment : Fragment() {
+    private val repository = DiaryRepository()
+
     private var diary: Diary? = null
 
     private var _binding: FragmentDiaryCardBinding? = null
@@ -39,10 +48,27 @@ class DiaryCardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.nameText.text = diary?.name
-        binding.openButton.setOnClickListener {
+        binding.backgroundImage.setOnClickListener {
             val intent = Intent(activity, DiaryDetailsActivity::class.java)
             intent.putExtra("diary", diary)
             startActivity(intent)
+        }
+
+        lifecycleScope.launch {
+            repository.getDiaryLatestSnap(diary!!).let {
+                if (it != null) {
+                    binding.descriptionText.text = LocalDate.ofEpochDay(it.day).toString()
+                    Picasso.get().load(it.thumbnailUrl).into(binding.backgroundImage)
+                    if (it.isThumbnailDark) {
+                        binding.nameText.setTextColor(
+                            ContextCompat.getColor(requireContext(), R.color.white)
+                        )
+                        binding.descriptionText.setTextColor(
+                            ContextCompat.getColor(requireContext(), R.color.white)
+                        )
+                    }
+                }
+            }
         }
     }
 

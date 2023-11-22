@@ -190,6 +190,21 @@ class DiaryRepository {
             .delete().await()
     }
 
+    suspend fun getDiaryLatestSnap(diary: Diary): Snap? {
+        if (auth.currentUser === null) {
+            throw Error("Cannot create diary: user is unauthenticated")
+        }
+
+        val uid = auth.currentUser!!.uid
+        val snapshot = firestore.collection("users").document(uid)
+            .collection("diaries").document(diary.id)
+            .collection("snaps")
+            .orderBy("day", Query.Direction.DESCENDING)
+            .limit(1).get().await()
+
+        return if (snapshot.isEmpty) null else Snap.createFrom(snapshot.documents[0])
+    }
+
     private suspend fun getSnapDBRef(uid: String, diary: Diary, day: Long): DocumentReference {
         val snapCollection = firestore.collection("users").document(uid)
             .collection("diaries").document(diary.id)
