@@ -44,7 +44,7 @@ fun calculateIsThumbnailDark(file: File): Boolean {
         i += pixelSpacing
     }
 
-    return (r + b + g) / (pixels.size * 3) > 80
+    return (r + b + g) / (pixels.size * 3) < 160
 }
 
 fun concatVideoFiles(context: Context, videos: List<File>): File {

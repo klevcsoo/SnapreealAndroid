@@ -29,14 +29,16 @@ class DiaryListActivity : AppCompatActivity() {
 
         if (auth.currentUser == null) {
             startActivity(Intent(this, LoginActivity::class.java))
-            recreate()
-        } else {
-            Picasso.get().load(viewModel.getPhotoURL()).into(binding.avatarImage)
-            viewModel.onList { diaries ->
-                val fragments = diaries.map { diary -> DiaryCardFragment.newInstance(diary) }
-                binding.diaryPager.adapter =
-                    DiaryListAdapter(fragments, this)
-            }
+        }
+
+        viewModel.userPhoto.observe(this) {
+            Picasso.get().load(it).into(binding.avatarImage)
+        }
+
+        viewModel.diaries.observe(this) {
+            val fragments =
+                it.map { diary -> DiaryCardFragment.newInstance(diary) }
+            binding.diaryPager.adapter = DiaryListAdapter(fragments, this)
         }
 
         binding.createDiaryButton.setOnClickListener {
