@@ -1,5 +1,6 @@
 package com.klevcsoo.snapreealandroid.ui.diary.details.snaps
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -12,7 +13,9 @@ import java.util.Calendar
 import java.util.Date
 
 class DiarySnapsViewModel : ViewModel() {
-    val days: MutableLiveData<List<DiaryDay>> = MutableLiveData(listOf())
+    private val _days: MutableLiveData<List<DiaryDay>> = MutableLiveData(listOf())
+    val days: LiveData<List<DiaryDay>>
+        get() = _days
 
     private val repository = DiaryRepository()
 
@@ -23,7 +26,7 @@ class DiarySnapsViewModel : ViewModel() {
                 val i = mutableDays.indexOfFirst { diaryDay -> diaryDay.day == snap.day }
                 if (i >= 0) mutableDays[i].snap = snap
             }
-            days.value = mutableDays
+            _days.value = mutableDays
         }
     }
 

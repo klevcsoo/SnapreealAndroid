@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.MediaScannerConnection
 import android.os.Environment
 import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -15,19 +16,24 @@ import java.io.File
 class DiaryVideoViewModel : ViewModel() {
     private val mediaRepository = MediaRepository()
 
-    val loading = MutableLiveData(false)
-    val videoFile = MutableLiveData<File?>(null)
+    private val _loading = MutableLiveData(false)
+    val loading: LiveData<Boolean>
+        get() = _loading
+
+    private val _videoFile = MutableLiveData<File?>(null)
+    val videoFile: LiveData<File?>
+        get() = _videoFile
 
     fun generate(context: Context, scope: LifecycleCoroutineScope, diary: Diary) {
-        loading.value = true
+        _loading.value = true
         scope.launch {
-            videoFile.value = mediaRepository.generateDiaryVideo(context, diary)
-            loading.value = false
+            _videoFile.value = mediaRepository.generateDiaryVideo(context, diary)
+            _loading.value = false
         }
     }
 
     fun saveToGallery(context: Context, diary: Diary) {
-        if (videoFile.value == null) {
+        if (_videoFile.value == null) {
             return
         }
 
@@ -39,7 +45,7 @@ class DiaryVideoViewModel : ViewModel() {
             listOf("snapreeal", "generated", "diary_${diary.id}_$now").joinToString(File.separator)
         )
 
-        videoFile.value!!.copyTo(publicVideoFile, overwrite = true)
+        _videoFile.value!!.copyTo(publicVideoFile, overwrite = true)
         MediaScannerConnection.scanFile(
             context,
             arrayOf(publicVideoFile.absolutePath),
