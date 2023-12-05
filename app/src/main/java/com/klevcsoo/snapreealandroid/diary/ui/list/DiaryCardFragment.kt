@@ -11,7 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.klevcsoo.snapreealandroid.R
 import com.klevcsoo.snapreealandroid.databinding.FragmentDiaryCardBinding
 import com.klevcsoo.snapreealandroid.diary.DiaryRepository
-import com.klevcsoo.snapreealandroid.diary.model.DiaryModel
+import com.klevcsoo.snapreealandroid.diary.model.Diary
 import com.klevcsoo.snapreealandroid.diary.ui.details.days.DiaryDetailsActivity
 import com.klevcsoo.snapreealandroid.util.serializable
 import com.squareup.picasso.Picasso
@@ -23,7 +23,7 @@ private const val ARG_DIARY = "diary"
 class DiaryCardFragment : Fragment() {
     private val repository = DiaryRepository()
 
-    private var diary: DiaryModel? = null
+    private var diary: Diary? = null
 
     private var _binding: FragmentDiaryCardBinding? = null
     private val binding get() = _binding!!
@@ -32,7 +32,7 @@ class DiaryCardFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            diary = it.serializable<DiaryModel>(ARG_DIARY)
+            diary = it.serializable<Diary>(ARG_DIARY)
         }
     }
 
@@ -79,7 +79,7 @@ class DiaryCardFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(diary: DiaryModel) =
+        fun newInstance(diary: Diary) =
             DiaryCardFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable(ARG_DIARY, diary)

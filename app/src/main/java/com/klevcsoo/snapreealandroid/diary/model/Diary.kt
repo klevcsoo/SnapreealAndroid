@@ -8,10 +8,10 @@ import java.time.Instant
 import java.util.Date
 
 @Entity
-data class DiaryModel(
-    @PrimaryKey(true) val id: String,
-    @ColumnInfo("created_at") val createdAt: Date,
+data class Diary(
+    @PrimaryKey(true) val id: Long,
+    @ColumnInfo("created_at") val createdAt: Long,
     @ColumnInfo("name") val name: String
 ) : Serializable {
-    constructor(name: String) : this("", Date.from(Instant.now()), name)
+    constructor(name: String) : this(0, Date.from(Instant.now()).time, name)
 }

@@ -4,55 +4,55 @@ import android.content.Context
 import android.util.Log
 import com.klevcsoo.snapreealandroid.AppDatabase
 import com.klevcsoo.snapreealandroid.diary.dto.DiaryDay
-import com.klevcsoo.snapreealandroid.diary.model.DiaryModel
+import com.klevcsoo.snapreealandroid.diary.model.Diary
 import com.klevcsoo.snapreealandroid.media.calculateIsThumbnailDark
 import com.klevcsoo.snapreealandroid.media.generateThumbnailFor
-import com.klevcsoo.snapreealandroid.snap.model.SnapModel
+import com.klevcsoo.snapreealandroid.snap.model.Snap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import java.io.File
 
 class DiaryRepository {
-    fun onDiaryList(context: Context, listener: (diaries: List<DiaryModel>) -> Unit) {
-        CoroutineScope(Dispatchers.IO).launch {
-            listener(AppDatabase.get(context).diaryDao().list())
-        }
+    suspend fun getDiaryList(context: Context): List<Diary> {
+        return CoroutineScope(Dispatchers.IO).async {
+            AppDatabase.get(context).diaryDao().list()
+        }.await()
     }
 
-    fun onDiaryDetails(context: Context, id: String, listener: (diary: DiaryModel?) -> Unit) {
-        CoroutineScope(Dispatchers.IO).launch {
-            listener(AppDatabase.get(context).diaryDao().get(id))
-        }
+    suspend fun getDiaryDetails(context: Context, id: Long): Diary {
+        return CoroutineScope(Dispatchers.IO).async {
+            AppDatabase.get(context).diaryDao().get(id)
+        }.await()
     }
 
-    suspend fun getDiarySnapList(context: Context, diary: DiaryModel): List<SnapModel> {
+    suspend fun getDiarySnapList(context: Context, diary: Diary): List<Snap> {
         return withContext(Dispatchers.IO) {
             AppDatabase.get(context).snapDao().list(diary.id)
         }
     }
 
-    fun onDiarySnapList(context: Context, id: String, listener: (snaps: List<SnapModel>) -> Unit) {
-        CoroutineScope(Dispatchers.IO).launch {
-            listener(AppDatabase.get(context).snapDao().list(id))
-        }
+    suspend fun getDiarySnapList(context: Context, id: Long): List<Snap> {
+        return CoroutineScope(Dispatchers.IO).async {
+            AppDatabase.get(context).snapDao().list(id)
+        }.await()
     }
 
     suspend fun createDiary(context: Context, name: String) {
         withContext(Dispatchers.IO) {
-            AppDatabase.get(context).diaryDao().create(DiaryModel(name))
+            AppDatabase.get(context).diaryDao().create(Diary(name))
         }
     }
 
-    suspend fun uploadSnap(context: Context, diary: DiaryModel, day: Long, videoFile: File) {
+    suspend fun uploadSnap(context: Context, diary: Diary, day: Long, videoFile: File) {
         Log.d(TAG, "Generating snap thumbnail...")
         val thumbnailFile = generateThumbnailFor(videoFile)
         val isDark = calculateIsThumbnailDark(thumbnailFile)
 
         withContext(Dispatchers.IO) {
             AppDatabase.get(context).snapDao()
-                .create(SnapModel(diary, day, isDark, thumbnailFile.path, videoFile.path))
+                .create(Snap(diary, day, isDark, thumbnailFile.path, videoFile.path))
         }
 
         Log.d(TAG, "Snap added!")
@@ -68,7 +68,7 @@ class DiaryRepository {
         }
     }
 
-    suspend fun getDiaryLatestSnap(context: Context, diary: DiaryModel): SnapModel? {
+    suspend fun getDiaryLatestSnap(context: Context, diary: Diary): Snap? {
         return withContext(Dispatchers.IO) {
             AppDatabase.get(context).snapDao().getLatest(diary.id)
         }

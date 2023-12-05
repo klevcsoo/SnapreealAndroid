@@ -4,12 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.klevcsoo.snapreealandroid.diary.model.Diary
 import com.klevcsoo.snapreealandroid.diary.model.DiaryDao
-import com.klevcsoo.snapreealandroid.diary.model.DiaryModel
+import com.klevcsoo.snapreealandroid.snap.model.Snap
 import com.klevcsoo.snapreealandroid.snap.model.SnapDao
-import com.klevcsoo.snapreealandroid.snap.model.SnapModel
 
-@Database(entities = [DiaryModel::class, SnapModel::class], version = 1)
+@Database(entities = [Diary::class, Snap::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun diaryDao(): DiaryDao
 

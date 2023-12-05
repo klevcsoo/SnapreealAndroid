@@ -6,12 +6,12 @@ import androidx.room.Query
 
 @Dao
 interface DiaryDao {
-    @Query("SELECT * FROM diarymodel")
-    fun list(): List<DiaryModel>
+    @Query("SELECT * FROM diary")
+    fun list(): List<Diary>
 
-    @Query("SELECT * FROM diarymodel WHERE id = (:id) LIMIT 1")
-    fun get(id: String): DiaryModel
+    @Query("SELECT * FROM diary WHERE id = (:id) LIMIT 1")
+    fun get(id: Long): Diary
 
     @Insert
-    fun create(diaryModel: DiaryModel)
+    fun create(diary: Diary)
 }

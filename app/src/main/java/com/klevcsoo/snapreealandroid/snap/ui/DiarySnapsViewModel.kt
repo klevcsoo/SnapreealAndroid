@@ -7,7 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.klevcsoo.snapreealandroid.diary.DiaryRepository
 import com.klevcsoo.snapreealandroid.diary.dto.DiaryDay
-import com.klevcsoo.snapreealandroid.diary.model.DiaryModel
+import com.klevcsoo.snapreealandroid.diary.model.Diary
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.ZoneId
 import java.util.Calendar
@@ -20,10 +23,11 @@ class DiarySnapsViewModel : ViewModel() {
 
     private val repository = DiaryRepository()
 
-    fun load(context: Context, diary: DiaryModel) {
-        repository.onDiarySnapList(context, diary.id) {
+    fun load(context: Context, diary: Diary) {
+        CoroutineScope(Dispatchers.Main).launch {
+            val snapList = repository.getDiarySnapList(context, diary.id)
             val mutableDays: MutableList<DiaryDay> = generateDays(diary).toMutableList()
-            it.forEach { snap ->
+            snapList.forEach { snap ->
                 val i = mutableDays.indexOfFirst { diaryDay -> diaryDay.day == snap.day }
                 if (i >= 0) mutableDays[i].snap = snap
             }
@@ -31,7 +35,7 @@ class DiarySnapsViewModel : ViewModel() {
         }
     }
 
-    private fun generateDays(diary: DiaryModel): List<DiaryDay> {
+    private fun generateDays(diary: Diary): List<DiaryDay> {
         val calendar = Calendar.getInstance()
         val list = mutableListOf<Date>()
 

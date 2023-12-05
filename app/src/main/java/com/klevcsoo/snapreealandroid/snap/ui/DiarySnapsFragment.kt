@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.klevcsoo.snapreealandroid.R
 import com.klevcsoo.snapreealandroid.databinding.FragmentDiarySnapsBinding
 import com.klevcsoo.snapreealandroid.diary.dto.DiaryDay
-import com.klevcsoo.snapreealandroid.diary.model.DiaryModel
+import com.klevcsoo.snapreealandroid.diary.model.Diary
 import com.klevcsoo.snapreealandroid.snap.ui.create.CreateSnapActivity
 import com.klevcsoo.snapreealandroid.util.serializable
 import com.squareup.picasso.Picasso
@@ -29,7 +29,7 @@ import java.util.Locale
 
 
 class DiarySnapsFragment : Fragment() {
-    private lateinit var diary: DiaryModel
+    private lateinit var diary: Diary
 
     private val viewModel by viewModels<DiarySnapsViewModel> {
         DiarySnapsViewModel.Companion.DiarySnapsViewModelFactory()
@@ -40,7 +40,7 @@ class DiarySnapsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            diary = it.serializable<DiaryModel>("diary")!!
+            diary = it.serializable<Diary>("diary")!!
             viewModel.load(requireContext(), diary)
         }
     }
@@ -76,7 +76,7 @@ class DiarySnapsFragment : Fragment() {
         private const val ARG_DIARY = "diary"
         private const val ARG_DIARY_DAY = "diaryDay"
 
-        fun newInstance(diary: DiaryModel) = DiarySnapsFragment().apply {
+        fun newInstance(diary: Diary) = DiarySnapsFragment().apply {
             arguments = Bundle().apply {
                 putSerializable(ARG_DIARY, diary)
             }
