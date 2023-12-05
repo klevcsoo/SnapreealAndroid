@@ -62,7 +62,7 @@ class SnapInspectorFragment : Fragment() {
         binding.discardButton.setOnClickListener {
             if (diaryDay.snap != null && !ignoreSnap) {
                 lifecycleScope.launch {
-                    repository.deleteSnap(diaryDay)
+                    repository.deleteSnap(requireContext(), diaryDay)
                     requireActivity().finish()
                 }
             } else {
@@ -81,7 +81,7 @@ class SnapInspectorFragment : Fragment() {
         binding.uploadButton.isEnabled = false
         binding.discardButton.isEnabled = false
         requireActivity().lifecycleScope.launch {
-            repository.uploadSnap(diaryDay.diary, diaryDay.day, snapFile)
+            repository.uploadSnap(requireContext(), diaryDay.diary, diaryDay.day, snapFile)
         }.invokeOnCompletion {
             if (it != null) {
                 Log.w(TAG, "Failed to upload snap", it)

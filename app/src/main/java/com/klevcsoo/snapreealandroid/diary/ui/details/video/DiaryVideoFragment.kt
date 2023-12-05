@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.klevcsoo.snapreealandroid.databinding.FragmentDiaryVideoBinding
-import com.klevcsoo.snapreealandroid.diary.model.Diary
+import com.klevcsoo.snapreealandroid.diary.model.DiaryModel
 import com.klevcsoo.snapreealandroid.util.serializable
 
 class DiaryVideoFragment : Fragment() {
@@ -19,14 +19,14 @@ class DiaryVideoFragment : Fragment() {
         DiaryVideoViewModel.Companion.DiaryVideoViewModelFactory()
     }
 
-    private lateinit var diary: Diary
+    private lateinit var diary: DiaryModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         arguments?.let {
-            diary = it.serializable<Diary>(ARG_DIARY)!!
+            diary = it.serializable<DiaryModel>(ARG_DIARY)!!
         }
 
         _binding = FragmentDiaryVideoBinding.inflate(inflater, container, false)
@@ -64,7 +64,7 @@ class DiaryVideoFragment : Fragment() {
     companion object {
         private const val ARG_DIARY = "diary"
 
-        fun newInstance(diary: Diary) = DiaryVideoFragment().apply {
+        fun newInstance(diary: DiaryModel) = DiaryVideoFragment().apply {
             arguments = Bundle().apply {
                 putSerializable(ARG_DIARY, diary)
             }

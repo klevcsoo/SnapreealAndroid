@@ -7,18 +7,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.klevcsoo.snapreealandroid.auth.ui.LoginActivity
 import com.klevcsoo.snapreealandroid.databinding.ActivityDiaryListBinding
 import com.klevcsoo.snapreealandroid.diary.ui.create.CreateDiaryActivity
-import com.klevcsoo.snapreealandroid.service.FirebaseService
-import com.squareup.picasso.Picasso
 
 class DiaryListActivity : AppCompatActivity() {
 
-    private val auth = FirebaseService.instance.auth
-
     private lateinit var viewModel: DiaryListViewModel
-
     private lateinit var binding: ActivityDiaryListBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,13 +21,7 @@ class DiaryListActivity : AppCompatActivity() {
         binding = ActivityDiaryListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (auth.currentUser == null) {
-            startActivity(Intent(this, LoginActivity::class.java))
-        }
-
-        viewModel.userPhoto.observe(this) {
-            Picasso.get().load(it).into(binding.avatarImage)
-        }
+        viewModel.load(this)
 
         viewModel.diaries.observe(this) {
             val fragments =

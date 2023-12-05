@@ -7,7 +7,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.klevcsoo.snapreealandroid.databinding.ActivityDiaryDetailsBinding
-import com.klevcsoo.snapreealandroid.diary.model.Diary
+import com.klevcsoo.snapreealandroid.diary.model.DiaryModel
 import com.klevcsoo.snapreealandroid.diary.ui.details.video.DiaryVideoFragment
 import com.klevcsoo.snapreealandroid.snap.ui.DiarySnapsFragment
 import com.klevcsoo.snapreealandroid.util.serializable
@@ -24,11 +24,11 @@ class DiaryDetailsActivity : AppCompatActivity() {
 
         binding.backButton.setOnClickListener { finish() }
 
-        val diary = intent.extras?.serializable<Diary>("diary")
+        val diary = intent.extras?.serializable<DiaryModel>("diary")
         if (diary == null) {
             finish()
         } else {
-            viewModel.load(diary.id)
+            viewModel.load(this, diary.id)
             viewModel.diary.observe(this) {
                 binding.titleText.text = it.name
                 binding.mainPager.adapter = DiaryPageContentAdapter(

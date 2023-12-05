@@ -8,13 +8,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.klevcsoo.snapreealandroid.diary.model.Diary
+import com.klevcsoo.snapreealandroid.diary.DiaryRepository
+import com.klevcsoo.snapreealandroid.diary.dto.DiaryDay
+import com.klevcsoo.snapreealandroid.diary.model.DiaryModel
 import com.klevcsoo.snapreealandroid.media.MediaRepository
 import kotlinx.coroutines.launch
 import java.io.File
 
 class DiaryVideoViewModel : ViewModel() {
     private val mediaRepository = MediaRepository()
+    private val diaryRepository = DiaryRepository()
 
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean>
@@ -24,15 +27,18 @@ class DiaryVideoViewModel : ViewModel() {
     val videoFile: LiveData<File?>
         get() = _videoFile
 
-    fun generate(context: Context, scope: LifecycleCoroutineScope, diary: Diary) {
+    fun generate(context: Context, scope: LifecycleCoroutineScope, diary: DiaryModel) {
         _loading.value = true
         scope.launch {
-            _videoFile.value = mediaRepository.generateDiaryVideo(context, diary)
+            val days = diaryRepository.getDiarySnapList(context, diary).map {
+                DiaryDay(diary, it.day, it)
+            }
+            _videoFile.value = mediaRepository.generateDiaryVideo(context, days)
             _loading.value = false
         }
     }
 
-    fun saveToGallery(context: Context, diary: Diary) {
+    fun saveToGallery(context: Context, diary: DiaryModel) {
         if (_videoFile.value == null) {
             return
         }

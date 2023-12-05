@@ -24,7 +24,7 @@ class CreateDiaryActivity : AppCompatActivity() {
 
         binding.createDiaryButton.setOnClickListener {
             Log.d(TAG, "Creating diary...")
-            viewModel.create { finish() }
+            viewModel.create(this) { finish() }
         }
 
         binding.backButton.setOnClickListener {
