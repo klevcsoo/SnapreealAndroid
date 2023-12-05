@@ -84,9 +84,9 @@ class DiarySnapsFragment : Fragment() {
 
         private class DaysGridAdapter(
             private val days: List<DiaryDay>, private val context: Context
-        ) : RecyclerView.Adapter<DaysGridAdapter.ViewHolder>() {
+        ) : RecyclerView.Adapter<DaysGridAdapter.DaysGridViewHolder>() {
 
-            class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+            class DaysGridViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                 val thumbnailImage: ImageView = view.findViewById(R.id.diaryDayThumbnailImage)
                 val dayText: TextView = view.findViewById(R.id.diaryDayDayText)
                 val dateText: TextView = view.findViewById(R.id.diaryDayDateText)
@@ -135,26 +135,10 @@ class DiarySnapsFragment : Fragment() {
                     val cmB = ColorMatrix()
                     cmB.set(
                         floatArrayOf(
-                            1f,
-                            0f,
-                            0f,
-                            0f,
-                            fb,
-                            0f,
-                            1f,
-                            0f,
-                            0f,
-                            fb,
-                            0f,
-                            0f,
-                            1f,
-                            0f,
-                            fb,
-                            0f,
-                            0f,
-                            0f,
-                            1f,
-                            0f
+                            1f, 0f, 0f, 0f, fb,
+                            0f, 1f, 0f, 0f, fb,
+                            0f, 0f, 1f, 0f, fb,
+                            0f, 0f, 0f, 1f, 0f
                         )
                     )
                     val colorMatrix = ColorMatrix()
@@ -165,13 +149,13 @@ class DiarySnapsFragment : Fragment() {
 
             override fun onCreateViewHolder(
                 parent: ViewGroup, viewType: Int
-            ): ViewHolder {
+            ): DaysGridViewHolder {
                 val view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.diary_day_card, parent, false)
-                return ViewHolder(view)
+                return DaysGridViewHolder(view)
             }
 
-            override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            override fun onBindViewHolder(holder: DaysGridViewHolder, position: Int) {
                 holder.setIsRecyclable(false)
                 holder.bind(context, days[position])
             }
