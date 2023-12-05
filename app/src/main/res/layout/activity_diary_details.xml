@@ -9,13 +9,13 @@
 
         <variable
                 name="viewModel"
-                type="com.klevcsoo.snapreealandroid.ui.diary.details.DiaryDetailsViewModel" />
+                type="com.klevcsoo.snapreealandroid.diary.ui.details.days.DiaryDetailsViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".ui.diary.details.DiaryDetailsActivity">
+            tools:context=".diary.ui.details.days.DiaryDetailsActivity">
 
         <com.google.android.material.card.MaterialCardView
                 style="@style/Widget.Material3.CardView.Outlined"

@@ -4,7 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.diary.list.DiaryCardFragment">
+        tools:context=".diary.ui.list.DiaryCardFragment">
 
     <com.google.android.material.card.MaterialCardView
             style="@style/Widget.Material3.CardView.Elevated"

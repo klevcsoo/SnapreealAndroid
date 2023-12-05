@@ -4,7 +4,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/snaps_in_your_diary"
-        tools:context=".ui.diary.details.snaps.DiarySnapsFragment">
+        tools:context=".snap.ui.DiarySnapsFragment">
 
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/dayGridRecyclerView"

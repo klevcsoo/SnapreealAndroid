@@ -9,14 +9,14 @@
 
         <variable
                 name="viewModel"
-                type="com.klevcsoo.snapreealandroid.ui.diary.details.video.DiaryVideoViewModel" />
+                type="com.klevcsoo.snapreealandroid.diary.ui.details.video.DiaryVideoViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="24dp"
-            tools:context=".ui.diary.details.video.DiaryVideoFragment">
+            tools:context=".diary.ui.details.video.DiaryVideoFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
