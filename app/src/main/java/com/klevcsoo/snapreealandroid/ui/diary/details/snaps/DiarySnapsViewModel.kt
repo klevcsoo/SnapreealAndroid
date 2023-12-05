@@ -49,6 +49,9 @@ class DiarySnapsViewModel : ViewModel() {
     }
 
     companion object {
+        @Suppress("unused")
+        private const val TAG = "DiarySnapViewModel"
+
         class DiarySnapsViewModelFactory : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(DiarySnapsViewModel::class.java)) {

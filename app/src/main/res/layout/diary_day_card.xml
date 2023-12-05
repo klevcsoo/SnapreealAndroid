@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:background="@drawable/snap_cell_shape"
-        tools:context=".ui.diary.details.snaps.SnapCardFragment">
+        android:background="@drawable/snap_cell_shape">
 
     <ImageView
-            android:id="@+id/thumbnailImage"
+            android:id="@+id/diaryDayThumbnailImage"
             android:layout_width="match_parent"
             android:layout_height="140dp"
             android:importantForAccessibility="no"
@@ -20,7 +18,7 @@
             app:layout_constraintEnd_toEndOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/dayText"
+            android:id="@+id/diaryDayDayText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
@@ -28,10 +26,10 @@
             android:fontFamily="@font/dm_sans_medium"
             android:textSize="12sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/dateText" />
+            app:layout_constraintBottom_toTopOf="@+id/diaryDayDateText" />
 
     <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/dateText"
+            android:id="@+id/diaryDayDateText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"

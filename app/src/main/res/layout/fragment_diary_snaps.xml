@@ -6,9 +6,8 @@
         android:contentDescription="@string/snaps_in_your_diary"
         tools:context=".ui.diary.details.snaps.DiarySnapsFragment">
 
-    <TableLayout
-            android:id="@+id/snapRowTable"
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/dayGridRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:stretchColumns="1, 2, 3" />
+            android:layout_height="wrap_content" />
 </ScrollView>
