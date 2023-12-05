@@ -151,7 +151,7 @@ class DiarySnapsFragment : Fragment() {
                 parent: ViewGroup, viewType: Int
             ): DaysGridViewHolder {
                 val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.diary_day_card, parent, false)
+                    .inflate(R.layout.card_diary_day, parent, false)
                 return DaysGridViewHolder(view)
             }
 
