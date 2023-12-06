@@ -33,6 +33,8 @@ class CreateSnapActivity : AppCompatActivity() {
         binding = ActivityCreateSnapBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        requestRequiredPermissions()
+
         binding.backButton.setOnClickListener { finish() }
     }
 

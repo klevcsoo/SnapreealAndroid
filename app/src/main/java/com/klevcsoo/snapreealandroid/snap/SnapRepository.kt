@@ -10,7 +10,6 @@ import com.klevcsoo.snapreealandroid.snap.model.Snap
 import com.klevcsoo.snapreealandroid.snap.model.SnapDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -30,7 +29,7 @@ class SnapRepository(private val snapDao: SnapDao) {
             val isDark = calculateIsThumbnailDark(thumbnailFile)
 
             withContext(Dispatchers.IO) {
-                val snap = snapDao.getByDay(diary.id, day).lastOrNull()
+                val snap = snapDao.getByDay(diary.id, day)
                 if (snap != null) snapDao.delete(snap)
 
                 snapDao.create(Snap(diary, day, isDark, thumbnailFile.path, videoFile.path))

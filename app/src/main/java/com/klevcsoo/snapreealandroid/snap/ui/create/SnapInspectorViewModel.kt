@@ -14,16 +14,12 @@ class SnapInspectorViewModel(
     val snapFile: File,
     val ignoreSnap: Boolean
 ) : ViewModel() {
-    fun uploadSnap() {
-        viewModelScope.launch {
-            repository.createSnap(diaryDay.diary, diaryDay.day, snapFile)
-        }
+    fun uploadSnap() = viewModelScope.launch {
+        repository.createSnap(diaryDay.diary, diaryDay.day, snapFile)
     }
 
-    fun deleteSnap() {
-        viewModelScope.launch {
-            repository.deleteSnap(diaryDay)
-        }
+    fun deleteSnap() = viewModelScope.launch {
+        repository.deleteSnap(diaryDay)
     }
 
     companion object {

@@ -10,13 +10,11 @@ import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.klevcsoo.snapreealandroid.R
 import com.klevcsoo.snapreealandroid.SnapreealApplication
 import com.klevcsoo.snapreealandroid.databinding.FragmentSnapInspectorBinding
 import com.klevcsoo.snapreealandroid.diary.dto.DiaryDay
 import com.klevcsoo.snapreealandroid.util.serializable
-import kotlinx.coroutines.launch
 import java.io.File
 
 class SnapInspectorFragment : Fragment() {
@@ -57,10 +55,7 @@ class SnapInspectorFragment : Fragment() {
         }
         binding.discardButton.setOnClickListener {
             if (viewModel.diaryDay.snap != null && !viewModel.ignoreSnap) {
-                lifecycleScope.launch {
-                    viewModel.deleteSnap()
-                    requireActivity().finish()
-                }
+                viewModel.deleteSnap().invokeOnCompletion { requireActivity().finish() }
             } else {
                 (requireActivity() as CreateSnapActivity).discardSnap()
             }
@@ -76,9 +71,7 @@ class SnapInspectorFragment : Fragment() {
     private fun upload() {
         binding.uploadButton.isEnabled = false
         binding.discardButton.isEnabled = false
-        requireActivity().lifecycleScope.launch {
-            viewModel.uploadSnap()
-        }.invokeOnCompletion {
+        viewModel.uploadSnap().invokeOnCompletion {
             if (it != null) {
                 Log.w(TAG, "Failed to upload snap", it)
                 Toast.makeText(requireContext(), "Could not upload snap", Toast.LENGTH_LONG)

@@ -15,7 +15,7 @@ interface SnapDao {
     fun get(id: Long): Flow<Snap?>
 
     @Query("SELECT * FROM snap WHERE diary_id = (:diaryId) AND day = (:day)")
-    fun getByDay(diaryId: Long, day: Long): Flow<Snap?>
+    fun getByDay(diaryId: Long, day: Long): Snap?
 
     @Query("SELECT * FROM snap WHERE diary_id = (:diaryId) ORDER BY day DESC LIMIT 1")
     fun getLatest(diaryId: Long): Flow<Snap?>
