@@ -8,33 +8,26 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
+import androidx.fragment.app.viewModels
 import com.klevcsoo.snapreealandroid.R
+import com.klevcsoo.snapreealandroid.SnapreealApplication
 import com.klevcsoo.snapreealandroid.databinding.FragmentDiaryCardBinding
-import com.klevcsoo.snapreealandroid.diary.DiaryRepository
 import com.klevcsoo.snapreealandroid.diary.model.Diary
 import com.klevcsoo.snapreealandroid.diary.ui.details.days.DiaryDetailsActivity
 import com.klevcsoo.snapreealandroid.media.dimmedFilter
 import com.klevcsoo.snapreealandroid.util.serializable
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 private const val ARG_DIARY = "diary"
 
 class DiaryCardFragment : Fragment() {
-    private val repository = DiaryRepository()
-
-    private var diary: Diary? = null
-
     private var _binding: FragmentDiaryCardBinding? = null
     private val binding get() = _binding!!
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        arguments?.let {
-            diary = it.serializable<Diary>(ARG_DIARY)
-        }
+    private val viewModel by viewModels<DiaryCardViewModel> {
+        DiaryCardViewModel.Companion.DiaryCardViewModelFactory(
+            (requireActivity().application as SnapreealApplication).snapRepository,
+            requireArguments().serializable<Diary>(ARG_DIARY)!!
+        )
     }
 
     override fun onCreateView(
@@ -48,27 +41,25 @@ class DiaryCardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.nameText.text = diary?.name
+        binding.nameText.text = viewModel.diary.name
         binding.backgroundImage.setOnClickListener {
             val intent = Intent(activity, DiaryDetailsActivity::class.java)
-            intent.putExtra("diary", diary)
+            intent.putExtra("diary", viewModel.diary)
             startActivity(intent)
         }
 
-        lifecycleScope.launch {
-            repository.getDiaryLatestSnap(requireContext(), diary!!).let {
-                if (it != null) {
-                    binding.descriptionText.text = LocalDate.ofEpochDay(it.day).toString()
-                    binding.backgroundImage.setImageURI(Uri.parse(it.thumbnailUrl))
-                    binding.backgroundImage.colorFilter = dimmedFilter()
-                    if (it.isThumbnailDark) {
-                        binding.nameText.setTextColor(
-                            ContextCompat.getColor(requireContext(), R.color.white)
-                        )
-                        binding.descriptionText.setTextColor(
-                            ContextCompat.getColor(requireContext(), R.color.white)
-                        )
-                    }
+        viewModel.latestSnap.observe(viewLifecycleOwner) {
+            if (it != null) {
+                binding.descriptionText.text = LocalDate.ofEpochDay(it.day).toString()
+                binding.backgroundImage.setImageURI(Uri.parse(it.thumbnailUrl))
+                binding.backgroundImage.colorFilter = dimmedFilter()
+                if (it.isThumbnailDark) {
+                    binding.nameText.setTextColor(
+                        ContextCompat.getColor(requireContext(), R.color.white)
+                    )
+                    binding.descriptionText.setTextColor(
+                        ContextCompat.getColor(requireContext(), R.color.white)
+                    )
                 }
             }
         }

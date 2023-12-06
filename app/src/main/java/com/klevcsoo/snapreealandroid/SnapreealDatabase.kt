@@ -10,19 +10,19 @@ import com.klevcsoo.snapreealandroid.snap.model.Snap
 import com.klevcsoo.snapreealandroid.snap.model.SnapDao
 
 @Database(entities = [Diary::class, Snap::class], version = 1, exportSchema = false)
-abstract class AppDatabase : RoomDatabase() {
+abstract class SnapreealDatabase : RoomDatabase() {
     abstract fun diaryDao(): DiaryDao
 
     abstract fun snapDao(): SnapDao
 
     companion object {
-        private var instance: AppDatabase? = null
+        private var instance: SnapreealDatabase? = null
 
-        fun get(context: Context): AppDatabase {
+        fun get(context: Context): SnapreealDatabase {
             return instance ?: synchronized(this) {
                 val newInstance = Room.databaseBuilder(
                     context.applicationContext,
-                    AppDatabase::class.java,
+                    SnapreealDatabase::class.java,
                     "snapreeal_db"
                 ).build()
                 instance = newInstance

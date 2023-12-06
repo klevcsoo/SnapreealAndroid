@@ -16,6 +16,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.klevcsoo.snapreealandroid.R
+import com.klevcsoo.snapreealandroid.SnapreealApplication
 import com.klevcsoo.snapreealandroid.databinding.FragmentDiarySnapsBinding
 import com.klevcsoo.snapreealandroid.diary.dto.DiaryDay
 import com.klevcsoo.snapreealandroid.diary.model.Diary
@@ -28,20 +29,14 @@ import java.util.Locale
 
 
 class DiarySnapsFragment : Fragment() {
-    private lateinit var diary: Diary
-
-    private val viewModel by viewModels<DiarySnapsViewModel> {
-        DiarySnapsViewModel.Companion.DiarySnapsViewModelFactory()
-    }
     private var _binding: FragmentDiarySnapsBinding? = null
     private val binding get() = _binding!!
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            diary = it.serializable<Diary>("diary")!!
-            viewModel.load(requireContext(), diary)
-        }
+    private val viewModel by viewModels<DiarySnapsViewModel> {
+        DiarySnapsViewModel.Companion.DiarySnapsViewModelFactory(
+            (requireActivity().application as SnapreealApplication).snapRepository,
+            requireArguments().serializable<Diary>("diary")!!,
+            viewLifecycleOwner
+        )
     }
 
     override fun onCreateView(

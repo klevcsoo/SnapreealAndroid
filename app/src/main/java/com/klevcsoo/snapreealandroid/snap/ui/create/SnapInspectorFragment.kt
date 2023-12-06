@@ -9,10 +9,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.klevcsoo.snapreealandroid.R
+import com.klevcsoo.snapreealandroid.SnapreealApplication
 import com.klevcsoo.snapreealandroid.databinding.FragmentSnapInspectorBinding
-import com.klevcsoo.snapreealandroid.diary.DiaryRepository
 import com.klevcsoo.snapreealandroid.diary.dto.DiaryDay
 import com.klevcsoo.snapreealandroid.util.serializable
 import kotlinx.coroutines.launch
@@ -21,19 +22,14 @@ import java.io.File
 class SnapInspectorFragment : Fragment() {
     private var _binding: FragmentSnapInspectorBinding? = null
     private val binding get() = _binding!!
-
-    private val repository = DiaryRepository()
-
-    private lateinit var diaryDay: DiaryDay
-    private lateinit var snapFile: File
-    private var ignoreSnap: Boolean = false
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            diaryDay = it.serializable<DiaryDay>(ARG_DIARY_DAY)!!
-            snapFile = it.serializable<File>(ARG_VIDEO)!!
-            ignoreSnap = it.getBoolean(ARG_IGNORE_SNAP)
+    private val viewModel by viewModels<SnapInspectorViewModel> {
+        requireArguments().let {
+            SnapInspectorViewModel.Companion.SnapInspectorViewModelFactory(
+                (requireActivity().application as SnapreealApplication).snapRepository,
+                it.serializable<DiaryDay>(ARG_DIARY_DAY)!!,
+                it.serializable<File>(ARG_VIDEO)!!,
+                it.getBoolean(ARG_IGNORE_SNAP)
+            )
         }
     }
 
@@ -44,7 +40,7 @@ class SnapInspectorFragment : Fragment() {
     ): View {
         _binding = FragmentSnapInspectorBinding.inflate(inflater, container, false)
 
-        if (diaryDay.snap != null && !ignoreSnap) {
+        if (viewModel.diaryDay.snap != null && !viewModel.ignoreSnap) {
             binding.uploadButton.text = "replace snap"
             binding.uploadButton.contentDescription = "replace snap"
             binding.uploadButton.icon = AppCompatResources.getDrawable(
@@ -53,16 +49,16 @@ class SnapInspectorFragment : Fragment() {
         }
 
         binding.uploadButton.setOnClickListener {
-            if (diaryDay.snap != null && !ignoreSnap) {
+            if (viewModel.diaryDay.snap != null && !viewModel.ignoreSnap) {
                 (requireActivity() as CreateSnapActivity).discardSnap()
             } else {
                 upload()
             }
         }
         binding.discardButton.setOnClickListener {
-            if (diaryDay.snap != null && !ignoreSnap) {
+            if (viewModel.diaryDay.snap != null && !viewModel.ignoreSnap) {
                 lifecycleScope.launch {
-                    repository.deleteSnap(requireContext(), diaryDay)
+                    viewModel.deleteSnap()
                     requireActivity().finish()
                 }
             } else {
@@ -70,7 +66,7 @@ class SnapInspectorFragment : Fragment() {
             }
         }
 
-        binding.mediaPreview.setVideoPath(snapFile.path)
+        binding.mediaPreview.setVideoPath(viewModel.snapFile.path)
         binding.mediaPreview.setOnPreparedListener { it.isLooping = true }
         binding.mediaPreview.start()
 
@@ -81,7 +77,7 @@ class SnapInspectorFragment : Fragment() {
         binding.uploadButton.isEnabled = false
         binding.discardButton.isEnabled = false
         requireActivity().lifecycleScope.launch {
-            repository.uploadSnap(requireContext(), diaryDay.diary, diaryDay.day, snapFile)
+            viewModel.uploadSnap()
         }.invokeOnCompletion {
             if (it != null) {
                 Log.w(TAG, "Failed to upload snap", it)

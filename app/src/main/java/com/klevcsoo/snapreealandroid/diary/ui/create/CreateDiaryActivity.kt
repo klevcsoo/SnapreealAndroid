@@ -3,19 +3,23 @@ package com.klevcsoo.snapreealandroid.diary.ui.create
 import android.os.Bundle
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
+import com.klevcsoo.snapreealandroid.SnapreealApplication
 import com.klevcsoo.snapreealandroid.databinding.ActivityCreateDiaryBinding
 
 
 class CreateDiaryActivity : AppCompatActivity() {
-    private lateinit var viewModel: CreateDiaryViewModel
+    private val viewModel: CreateDiaryViewModel by viewModels {
+        CreateDiaryViewModel.Companion.CreateDiaryViewModelFactory(
+            (application as SnapreealApplication).diaryRepository
+        )
+    }
 
     private lateinit var binding: ActivityCreateDiaryBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this)[CreateDiaryViewModel::class.java]
         binding = ActivityCreateDiaryBinding.inflate(layoutInflater)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
@@ -24,7 +28,7 @@ class CreateDiaryActivity : AppCompatActivity() {
 
         binding.createDiaryButton.setOnClickListener {
             Log.d(TAG, "Creating diary...")
-            viewModel.create(this) { finish() }
+            viewModel.create().invokeOnCompletion { finish() }
         }
 
         binding.backButton.setOnClickListener {

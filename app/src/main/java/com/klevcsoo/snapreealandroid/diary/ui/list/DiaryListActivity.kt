@@ -2,26 +2,28 @@ package com.klevcsoo.snapreealandroid.diary.ui.list
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.klevcsoo.snapreealandroid.SnapreealApplication
 import com.klevcsoo.snapreealandroid.databinding.ActivityDiaryListBinding
 import com.klevcsoo.snapreealandroid.diary.ui.create.CreateDiaryActivity
 
 class DiaryListActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: DiaryListViewModel
     private lateinit var binding: ActivityDiaryListBinding
+    private val viewModel by viewModels<DiaryListViewModel> {
+        DiaryListViewModel.Companion.DiaryListViewModelFactory(
+            (application as SnapreealApplication).diaryRepository
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this)[DiaryListViewModel::class.java]
         binding = ActivityDiaryListBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        viewModel.load(this)
 
         viewModel.diaries.observe(this) {
             val fragments =

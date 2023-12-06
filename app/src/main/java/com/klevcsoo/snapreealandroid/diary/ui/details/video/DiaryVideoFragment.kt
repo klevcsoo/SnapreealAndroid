@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
+import com.klevcsoo.snapreealandroid.SnapreealApplication
 import com.klevcsoo.snapreealandroid.databinding.FragmentDiaryVideoBinding
 import com.klevcsoo.snapreealandroid.diary.model.Diary
 import com.klevcsoo.snapreealandroid.util.serializable
@@ -15,20 +15,19 @@ import com.klevcsoo.snapreealandroid.util.serializable
 class DiaryVideoFragment : Fragment() {
     private var _binding: FragmentDiaryVideoBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: DiaryVideoViewModel by viewModels<DiaryVideoViewModel> {
-        DiaryVideoViewModel.Companion.DiaryVideoViewModelFactory()
+    private val viewModel by viewModels<DiaryVideoViewModel> {
+        DiaryVideoViewModel.Companion.DiaryVideoViewModelFactory(
+            (requireActivity().application as SnapreealApplication).mediaRepository,
+            (requireActivity().application as SnapreealApplication).snapRepository,
+            requireArguments().serializable<Diary>(ARG_DIARY)!!,
+            viewLifecycleOwner
+        )
     }
-
-    private lateinit var diary: Diary
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        arguments?.let {
-            diary = it.serializable<Diary>(ARG_DIARY)!!
-        }
-
         _binding = FragmentDiaryVideoBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
@@ -36,7 +35,7 @@ class DiaryVideoFragment : Fragment() {
         viewModel.videoFile.observe(viewLifecycleOwner) { file ->
             if (file != null) {
                 binding.saveButton.setOnClickListener {
-                    viewModel.saveToGallery(requireContext(), diary)
+                    viewModel.saveToGallery(requireContext())
                     Toast.makeText(requireContext(), "saved to gallery!", Toast.LENGTH_LONG)
                         .show()
                 }
@@ -46,7 +45,7 @@ class DiaryVideoFragment : Fragment() {
                 binding.videoPreview.start()
             } else {
                 binding.saveButton.setOnClickListener {
-                    viewModel.generate(requireContext(), lifecycleScope, diary)
+                    viewModel.generate(requireContext())
                 }
 
                 binding.videoPreview.stopPlayback()

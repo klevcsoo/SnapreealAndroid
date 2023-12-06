@@ -1,11 +1,12 @@
 package com.klevcsoo.snapreealandroid.diary.ui.details.days
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.klevcsoo.snapreealandroid.SnapreealApplication
 import com.klevcsoo.snapreealandroid.databinding.ActivityDiaryDetailsBinding
 import com.klevcsoo.snapreealandroid.diary.model.Diary
 import com.klevcsoo.snapreealandroid.diary.ui.details.video.DiaryVideoFragment
@@ -14,30 +15,28 @@ import com.klevcsoo.snapreealandroid.util.serializable
 
 class DiaryDetailsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDiaryDetailsBinding
-    private lateinit var viewModel: DiaryDetailsViewModel
+    private val viewModel by viewModels<DiaryDetailsViewModel> {
+        DiaryDetailsViewModel.Companion.DiaryDetailsViewModelFactory(
+            (application as SnapreealApplication).diaryRepository,
+            intent.extras?.serializable<Diary>("diary")!!
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this)[DiaryDetailsViewModel::class.java]
         binding = ActivityDiaryDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.backButton.setOnClickListener { finish() }
 
-        val diary = intent.extras?.serializable<Diary>("diary")
-        if (diary == null) {
-            finish()
-        } else {
-            viewModel.load(this, diary.id)
-            viewModel.diary.observe(this) {
-                binding.titleText.text = it.name
-                binding.mainPager.adapter = DiaryPageContentAdapter(
-                    listOf(
-                        DiarySnapsFragment.newInstance(it),
-                        DiaryVideoFragment.newInstance(diary)
-                    ), this
-                )
-            }
+        viewModel.diary.observe(this) {
+            binding.titleText.text = it.name
+            binding.mainPager.adapter = DiaryPageContentAdapter(
+                listOf(
+                    DiarySnapsFragment.newInstance(it),
+                    DiaryVideoFragment.newInstance(it)
+                ), this
+            )
         }
     }
 
