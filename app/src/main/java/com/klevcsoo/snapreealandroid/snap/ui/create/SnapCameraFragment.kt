@@ -145,7 +145,7 @@ class SnapCameraFragment : Fragment() {
         val name = listOf(
             "diary", diaryDay.diary.id, "${diaryDay.day}.mp4"
         ).joinToString(File.separator)
-        targetFile = File(requireContext().cacheDir, name)
+        targetFile = File(requireContext().filesDir, name)
         val fileOutputOptions = FileOutputOptions.Builder(targetFile!!).build()
 
         if (ActivityCompat.checkSelfPermission(

@@ -11,7 +11,10 @@ interface SnapDao {
     fun list(diaryId: Long): List<Snap>
 
     @Query("SELECT * FROM snap WHERE id = (:id) LIMIT 1")
-    fun get(id: Long): Snap
+    fun get(id: Long): Snap?
+
+    @Query("SELECT * FROM snap WHERE diary_id = (:diaryId) AND day = (:day)")
+    fun getByDay(diaryId: Long, day: Long): Snap?
 
     @Query("SELECT * FROM snap WHERE diary_id = (:diaryId) ORDER BY day DESC LIMIT 1")
     fun getLatest(diaryId: Long): Snap?

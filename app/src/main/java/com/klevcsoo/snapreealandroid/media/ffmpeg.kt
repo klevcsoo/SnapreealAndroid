@@ -48,7 +48,7 @@ fun calculateIsThumbnailDark(file: File): Boolean {
 }
 
 fun concatVideoFiles(context: Context, videos: List<File>): File {
-    val workDir = File(context.cacheDir, "diary_render")
+    val workDir = File(context.filesDir, "diary_render")
     if (workDir.exists()) workDir.deleteRecursively()
     workDir.mkdir()
 

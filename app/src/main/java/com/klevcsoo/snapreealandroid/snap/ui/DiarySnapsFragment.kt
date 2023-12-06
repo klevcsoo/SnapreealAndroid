@@ -2,8 +2,7 @@ package com.klevcsoo.snapreealandroid.snap.ui
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.ColorMatrix
-import android.graphics.ColorMatrixColorFilter
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -20,9 +19,9 @@ import com.klevcsoo.snapreealandroid.R
 import com.klevcsoo.snapreealandroid.databinding.FragmentDiarySnapsBinding
 import com.klevcsoo.snapreealandroid.diary.dto.DiaryDay
 import com.klevcsoo.snapreealandroid.diary.model.Diary
+import com.klevcsoo.snapreealandroid.media.dimmedFilter
 import com.klevcsoo.snapreealandroid.snap.ui.create.CreateSnapActivity
 import com.klevcsoo.snapreealandroid.util.serializable
-import com.squareup.picasso.Picasso
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
@@ -113,7 +112,7 @@ class DiarySnapsFragment : Fragment() {
 
                     if (diaryDay.snap != null) {
                         Log.d(TAG, "day: ${diaryDay.day}, snap: ${diaryDay.snap!!.day}")
-                        Picasso.get().load(diaryDay.snap!!.thumbnailUrl).into(thumbnailImage)
+                        thumbnailImage.setImageURI(Uri.parse(diaryDay.snap!!.thumbnailUrl))
 
                         if (diaryDay.snap!!.isThumbnailDark) {
                             dateText.setTextColor(ContextCompat.getColor(context, R.color.white))
@@ -128,22 +127,6 @@ class DiarySnapsFragment : Fragment() {
                         intent.putExtra(ARG_DIARY_DAY, diaryDay)
                         context.startActivity(intent)
                     }
-                }
-
-                private fun dimmedFilter(): ColorMatrixColorFilter {
-                    val fb = -50F
-                    val cmB = ColorMatrix()
-                    cmB.set(
-                        floatArrayOf(
-                            1f, 0f, 0f, 0f, fb,
-                            0f, 1f, 0f, 0f, fb,
-                            0f, 0f, 1f, 0f, fb,
-                            0f, 0f, 0f, 1f, 0f
-                        )
-                    )
-                    val colorMatrix = ColorMatrix()
-                    colorMatrix.set(cmB)
-                    return ColorMatrixColorFilter(colorMatrix)
                 }
             }
 

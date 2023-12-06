@@ -51,6 +51,11 @@ class DiaryRepository {
         val isDark = calculateIsThumbnailDark(thumbnailFile)
 
         withContext(Dispatchers.IO) {
+            val snap = AppDatabase.get(context).snapDao().getByDay(diary.id, day)
+            if (snap != null) {
+                AppDatabase.get(context).snapDao().delete(snap)
+            }
+
             AppDatabase.get(context).snapDao()
                 .create(Snap(diary, day, isDark, thumbnailFile.path, videoFile.path))
         }

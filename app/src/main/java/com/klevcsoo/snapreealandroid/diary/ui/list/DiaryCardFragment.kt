@@ -1,6 +1,7 @@
 package com.klevcsoo.snapreealandroid.diary.ui.list
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,8 +14,8 @@ import com.klevcsoo.snapreealandroid.databinding.FragmentDiaryCardBinding
 import com.klevcsoo.snapreealandroid.diary.DiaryRepository
 import com.klevcsoo.snapreealandroid.diary.model.Diary
 import com.klevcsoo.snapreealandroid.diary.ui.details.days.DiaryDetailsActivity
+import com.klevcsoo.snapreealandroid.media.dimmedFilter
 import com.klevcsoo.snapreealandroid.util.serializable
-import com.squareup.picasso.Picasso
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -58,7 +59,8 @@ class DiaryCardFragment : Fragment() {
             repository.getDiaryLatestSnap(requireContext(), diary!!).let {
                 if (it != null) {
                     binding.descriptionText.text = LocalDate.ofEpochDay(it.day).toString()
-                    Picasso.get().load(it.thumbnailUrl).into(binding.backgroundImage)
+                    binding.backgroundImage.setImageURI(Uri.parse(it.thumbnailUrl))
+                    binding.backgroundImage.colorFilter = dimmedFilter()
                     if (it.isThumbnailDark) {
                         binding.nameText.setTextColor(
                             ContextCompat.getColor(requireContext(), R.color.white)
